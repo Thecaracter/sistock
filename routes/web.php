@@ -24,5 +24,8 @@ Route::delete('/user/{id}', [UserController::class, 'destroy'])->name('user.dest
 //Product Routes
 Route::get('/product', [ProductController::class, 'index'])->name('product.index');
 Route::post('/product/tambah', [ProductController::class, 'store'])->name('product.store');
-Route::put('/product/{id}', [ProductController::class, 'update'])->name('product.update');
-Route::delete('/product/{id}', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::put('/product/{product}', [ProductController::class, 'update'])->name('product.update');
+Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
+Route::post('/import-excel', [ProductController::class, 'importExcel'])->name('products.import.excel');
+Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('products.export.excel');
+

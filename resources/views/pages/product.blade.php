@@ -10,21 +10,30 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Data Produk</h4>
+                            <div class="row text-right">
+                                <div class="col">
+                                    <button type="button" class="btn btn-success" data-toggle="modal"
+                                        data-target="#uploadExcelModal">
+                                        <i class="fas fa-file-excel"></i> Import Data
+                                    </button>
+                                    <button type="button" class="btn btn-info"
+                                        onclick="window.location.href='{{ route('products.export.excel') }}'">
+                                        <i class="fas fa-download"></i> Export Data
+                                    </button>
+                                    <button type="button" class="btn btn-primary" data-toggle="modal"
+                                        data-target="#createProductModal">
+                                        <i class="fas fa-plus"></i> Tambah Produk
+                                    </button>
 
-                            <div class="align-right text-right">
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#createProductModal">
-                                    Tambah Produk
-                                </button>
+                                </div>
                             </div>
+
                             <br>
                             <div class="search-element">
                                 <input id="searchInput" class="form-control" type="search" placeholder="Search"
                                     aria-label="Search">
                             </div>
-
                             <br>
-
                             <div class="table-responsive">
                                 <table id="example" class="table table-bordered zero-configuration">
                                     <thead>
@@ -43,7 +52,7 @@
                                                 <td class="text-center">{{ $product->name }}</td>
                                                 <td class="text-center">{{ $product->description }}</td>
                                                 <td class="text-center">
-                                                    <img src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('fotoproduct/notfound.jpg') }}"
+                                                    <img src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('foto/notfound.png') }}"
                                                         alt="{{ $product->name }}" style="width: 100px;">
                                                 </td>
                                                 <td class="align-middle text-center">
@@ -97,7 +106,10 @@
                             </div>
                             <div class="form-group">
                                 <label for="image">Gambar:</label>
-                                <input type="file" class="form-control" id="image" name="image" required>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*"
+                                    required>
+                                <img id="previewImage" src="#" alt="Preview"
+                                    style="display:none; width: 100px; margin-top: 10px;">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -108,6 +120,7 @@
                 </div>
             </div>
         </div>
+
 
         <!-- Modal Edit Produk -->
         @foreach ($products as $product)
@@ -139,8 +152,9 @@
                                 <div class="form-group">
                                     <label for="editImage{{ $product->id }}">Gambar:</label>
                                     <input type="file" class="form-control" id="editImage{{ $product->id }}"
-                                        name="image">
-                                    <img src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('fotoproduct/notfound.jpg') }}"
+                                        name="image" accept="image/*">
+                                    <img id="previewImage{{ $product->id }}"
+                                        src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('foto/notfound.jpg') }}"
                                         alt="{{ $product->name }}" style="width: 100px; margin-top: 10px;">
                                 </div>
                             </div>
@@ -153,9 +167,82 @@
                 </div>
             </div>
         @endforeach
+        <!-- Modal Impor Excel-->
+        <div class="modal fade" id="uploadExcelModal" tabindex="-1" role="dialog"
+            aria-labelledby="uploadExcelModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="uploadExcelModalLabel">Upload File Excel</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('products.import.excel') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="file">Pilih File Excel</label>
+                                <input type="file" name="file" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-file-excel"></i> Import Data
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
         <script>
             $(document).ready(function() {
+                // Preview image for "Tambah Produk" form
+                $('#image').change(function(event) {
+                    const file = event.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            $('#previewImage').attr('src', e.target.result).show();
+                        }
+                        reader.readAsDataURL(file);
+                    } else {
+                        $('#previewImage').hide();
+                    }
+                });
+                $('#createProductModal form').on('submit', function() {
+                    $(this).find('button[type="submit"]').prop('disabled', true);
+                });
+
+                // Prevent multiple clicks on edit buttons
+                @foreach ($products as $product)
+                    $('#editProductForm{{ $product->id }}').on('submit', function() {
+                        $(this).find('button[type="submit"]').prop('disabled', true);
+                    });
+                @endforeach
+
+
+                // Preview image for "Edit Product" form
+                @foreach ($products as $product)
+                    $('#editImage{{ $product->id }}').change(function(event) {
+                        const file = event.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                $('#previewImage{{ $product->id }}').attr('src', e.target.result);
+                            }
+                            reader.readAsDataURL(file);
+                        } else {
+                            $('#previewImage{{ $product->id }}').attr('src',
+                                '{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('fotoproduct/notfound.jpg') }}'
+                            );
+                        }
+                    });
+                @endforeach
+
+                // Search functionality
                 $('#searchInput').on('keyup', function() {
                     var value = $(this).val().toLowerCase();
                     $('table tbody tr').filter(function() {
@@ -163,6 +250,7 @@
                     });
                 });
 
+                // Confirmation for delete
                 window.confirmDelete = function(productId) {
                     Swal.fire({
                         title: 'Yakin Mo Ngapus Bro?',
@@ -171,11 +259,15 @@
                         showCancelButton: true,
                         confirmButtonColor: '#3085d6',
                         cancelButtonColor: '#d33',
-                        confirmButtonText: 'Ya, saya yakin!'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            document.getElementById('deleteForm-' + productId).submit();
-                        }
+                        confirmButtonText: 'Ya, saya yakin!',
+                        showLoaderOnConfirm: true,
+                        preConfirm: () => {
+                            return new Promise((resolve) => {
+                                $('#deleteForm-' + productId).submit();
+                                resolve();
+                            });
+                        },
+                        allowOutsideClick: () => !Swal.isLoading()
                     });
                 };
             });
@@ -193,4 +285,5 @@
                 });
             </script>
         @endif
-    @endsection
+    </div>
+@endsection
