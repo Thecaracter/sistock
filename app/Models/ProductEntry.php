@@ -5,17 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductExit extends Model
+class ProductEntry extends Model
 {
     use HasFactory;
-    protected $table = 'product_exits';
+    protected $table = 'product_entries';
 
     protected $fillable = [
         'product_id',
         'quantity',
         'price',
         'total',
-        'exit_date',
+        'entry_date',
     ];
 
     /**

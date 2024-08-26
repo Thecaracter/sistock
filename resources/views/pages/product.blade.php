@@ -42,6 +42,7 @@
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Deskripsi</th>
                                             <th class="text-center">Gambar</th>
+                                            <th class="text-center">Detail Stock</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -54,6 +55,12 @@
                                                 <td class="text-center">
                                                     <img src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('foto/notfound.png') }}"
                                                         alt="{{ $product->name }}" style="width: 100px;">
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-info" data-toggle="modal"
+                                                        data-target="#stockDetailModal{{ $product->id }}">
+                                                        <i class="fas fa-info-circle"></i> Detail Stock
+                                                    </button>
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span>
@@ -106,8 +113,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="image">Gambar:</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*"
-                                    required>
+                                <input type="file" class="form-control" id="image" name="image"
+                                    accept="image/*" required>
                                 <img id="previewImage" src="#" alt="Preview"
                                     style="display:none; width: 100px; margin-top: 10px;">
                             </div>
@@ -163,6 +170,48 @@
                                 <button type="submit" class="btn btn-primary">Update</button>
                             </div>
                         </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal Detail Stock -->
+            <div class="modal fade" id="stockDetailModal{{ $product->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="stockDetailModalLabel{{ $product->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="stockDetailModalLabel{{ $product->id }}">Detail Stock -
+                                {{ $product->name }}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Tanggal Masuk</th>
+                                            <th>Jumlah</th>
+                                            <th>Harga</th>
+                                            <th>Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($product->productEntries as $entry)
+                                            <tr>
+                                                <td>{{ $entry->entry_date }}</td>
+                                                <td>{{ $entry->quantity }}</td>
+                                                <td>{{ $entry->price }}</td>
+                                                <td>{{ $entry->total }}</td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        </div>
                     </div>
                 </div>
             </div>
