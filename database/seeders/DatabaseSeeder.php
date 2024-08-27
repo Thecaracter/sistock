@@ -18,6 +18,8 @@ class DatabaseSeeder extends Seeder
             ProductSeeder::class,
             ProductEntriesSeeder::class,
             ProductEntryDetailSeeder::class,
+            // ProductExitsSeeder::class,
+            // ProductExitDetailSeeder::class,
         ]);
 
     }

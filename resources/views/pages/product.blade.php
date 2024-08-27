@@ -204,9 +204,9 @@
                                     <thead>
                                         <tr>
                                             <th>Tanggal Masuk</th>
-                                            <th>Jumlah</th>
+                                            <th>Jumlah (Stock)</th>
                                             <th>Harga</th>
-                                            <th>Total</th>
+                                            <th>Total Harga</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -219,13 +219,14 @@
                                             <tr>
                                                 <td>{{ \Carbon\Carbon::parse($detail->productEntry->tgl_permintaan)->format('d/m/Y') }}
                                                 </td>
-                                                <td>{{ $detail->quantity }}</td>
+                                                <td>{{ $detail->stock }}</td> <!-- Menggunakan stock -->
                                                 <td>{{ number_format($detail->price, 2) }}</td>
-                                                <td>{{ number_format($detail->total, 2) }}</td>
+                                                <td>{{ number_format($detail->stock * $detail->price, 2) }}</td>
+                                                <!-- Total Harga -->
                                             </tr>
                                             @php
-                                                $totalQuantity += $detail->quantity;
-                                                $totalPrice += $detail->total;
+                                                $totalQuantity += $detail->stock; // Menggunakan stock
+                                                $totalPrice += $detail->stock * $detail->price; // Total Harga
                                             @endphp
                                         @endforeach
                                     </tbody>

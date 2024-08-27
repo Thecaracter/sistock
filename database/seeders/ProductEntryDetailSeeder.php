@@ -26,6 +26,7 @@ class ProductEntryDetailSeeder extends Seeder
                 'quantity' => $quantity,
                 'price' => $price,
                 'total' => $total,
+                'stock' => $quantity, // Menambahkan kolom stock dengan nilai quantity
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);

@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->integer('quantity');
             $table->integer('price');
             $table->integer('total');
+            $table->integer('stock');
             $table->timestamps();
         });
     }

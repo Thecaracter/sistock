@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ProductExit extends Model
 {
     use HasFactory;
+
     protected $table = 'product_exits';
 
     protected $fillable = [
@@ -17,4 +18,12 @@ class ProductExit extends Model
         'jenis_barang',
         'total',
     ];
+
+    /**
+     * Get the details for the product exit.
+     */
+    public function productExitDetails()
+    {
+        return $this->hasMany(ProductExitDetail::class);
+    }
 }
