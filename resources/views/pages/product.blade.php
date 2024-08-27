@@ -191,7 +191,7 @@
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="stockDetailModalLabel{{ $product->id }}">Detail Stock -
+                            <h5 class="modal-title" id="stockDetailModalLabel{{ $product->id }}">Detail Stok -
                                 {{ $product->name }}</h5>
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">&times;</span>
@@ -199,6 +199,7 @@
                         </div>
                         <div class="modal-body">
                             <div class="table-responsive">
+                                <h6>Detail Masuk</h6>
                                 <table class="table table-bordered">
                                     <thead>
                                         <tr>
@@ -209,16 +210,30 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach ($product->productEntries as $entry)
+                                        @php
+                                            $totalQuantity = 0;
+                                            $totalPrice = 0;
+                                        @endphp
+
+                                        @foreach ($product->productEntriesDetail as $detail)
                                             <tr>
-                                                <td>{{ $entry->entry_date }}</td>
-                                                <td>{{ $entry->quantity }}</td>
-                                                <td>{{ $entry->price }}</td>
-                                                <td>{{ $entry->total }}</td>
+                                                <td>{{ \Carbon\Carbon::parse($detail->productEntry->tgl_permintaan)->format('d/m/Y') }}
+                                                </td>
+                                                <td>{{ $detail->quantity }}</td>
+                                                <td>{{ number_format($detail->price, 2) }}</td>
+                                                <td>{{ number_format($detail->total, 2) }}</td>
                                             </tr>
+                                            @php
+                                                $totalQuantity += $detail->quantity;
+                                                $totalPrice += $detail->total;
+                                            @endphp
                                         @endforeach
                                     </tbody>
                                 </table>
+                            </div>
+                            <div class="mt-3">
+                                <strong>Total Stok: {{ $totalQuantity }}</strong><br>
+                                <strong>Total Harga: {{ number_format($totalPrice, 2) }}</strong>
                             </div>
                         </div>
                         <div class="modal-footer">

@@ -17,9 +17,20 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::with('productEntries')->get();
+        // Mengambil semua produk bersama dengan relasi productEntriesDetail dan productEntry
+        $products = Product::with('productEntriesDetail.productEntry')->get();
+
+        // Mengurutkan produk berdasarkan tgl_permintaan dari detail entri
+        foreach ($products as $product) {
+            $product->productEntriesDetail = $product->productEntriesDetail->sortBy(function ($detail) {
+                return Carbon::parse($detail->productEntry->tgl_permintaan);
+            });
+        }
+
+        // Mengirimkan data produk ke view 'pages.product'
         return view('pages.product', compact('products'));
     }
+
 
     public function store(Request $request)
     {

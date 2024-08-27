@@ -11,18 +11,10 @@ class ProductExit extends Model
     protected $table = 'product_exits';
 
     protected $fillable = [
-        'product_id',
-        'quantity',
-        'price',
+        'nama_kapal',
+        'no_exit',
+        'tgl_exit',
+        'jenis_barang',
         'total',
-        'exit_date',
     ];
-
-    /**
-     * Relationship with Product.
-     */
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
 }

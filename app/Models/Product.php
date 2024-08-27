@@ -15,12 +15,9 @@ class Product extends Model
         'merk',
         'image',
     ];
-    public function productEntries()
+    public function productEntriesDetail()
     {
-        return $this->hasMany(ProductEntry::class);
+        return $this->hasMany(ProductEntryDetail::class);
     }
-    public function productExits()
-    {
-        return $this->hasMany(ProductExit::class);
-    }
+
 }

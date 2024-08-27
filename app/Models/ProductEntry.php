@@ -11,18 +11,10 @@ class ProductEntry extends Model
     protected $table = 'product_entries';
 
     protected $fillable = [
-        'product_id',
-        'quantity',
-        'price',
+        'nama_kapal',
+        'no_permintaan',
+        'tgl_permintaan',
+        'jenis_barang',
         'total',
-        'entry_date',
     ];
-
-    /**
-     * Relationship with Product.
-     */
-    public function product()
-    {
-        return $this->belongsTo(Product::class);
-    }
 }

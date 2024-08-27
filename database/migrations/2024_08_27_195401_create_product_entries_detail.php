@@ -10,12 +10,12 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('product_exits', function (Blueprint $table) {
+        Schema::create('product_entries_detail', function (Blueprint $table) {
             $table->id();
-            $table->string('nama_kapal');
-            $table->string('no_exit');
-            $table->date('tgl_exit');
-            $table->string('jenis_barang');
+            $table->foreignId('product_entry_id')->constrained('product_entries')->onDelete('cascade');
+            $table->foreignId('product_id')->constrained('product')->onDelete('cascade');
+            $table->integer('quantity');
+            $table->integer('price');
             $table->integer('total');
             $table->timestamps();
         });
@@ -26,6 +26,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('product_exits');
+        Schema::dropIfExists('product_entries_detail');
     }
 };

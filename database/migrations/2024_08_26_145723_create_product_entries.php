@@ -12,11 +12,11 @@ return new class extends Migration {
     {
         Schema::create('product_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('product_id')->constrained('product')->onDelete('cascade');
-            $table->integer('quantity');
-            $table->integer('price');
+            $table->string('nama_kapal');
+            $table->string('no_permintaan');
+            $table->date('tgl_permintaan');
+            $table->string('jenis_barang');
             $table->integer('total');
-            $table->date('entry_date');
             $table->timestamps();
         });
     }

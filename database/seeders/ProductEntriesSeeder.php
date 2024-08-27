@@ -15,13 +15,13 @@ class ProductEntriesSeeder extends Seeder
      */
     public function run(): void
     {
-        for ($i = 0; $i < 10; $i++) {
+        for ($i = 1; $i <= 10; $i++) {
             ProductEntry::create([
-                'product_id' => rand(1, Product::count()),
-                'quantity' => rand(10, 100),
-                'price' => rand(10000, 50000),
-                'total' => rand(10, 100) * rand(10000, 50000),
-                'entry_date' => Carbon::now()->subDays(rand(0, 30))->format('Y-m-d'),
+                'nama_kapal' => 'Kapal Laut ' . $i,
+                'no_permintaan' => 'REQ000' . $i,
+                'tgl_permintaan' => now()->addDays($i), // Menggunakan tanggal saat ini ditambah i hari
+                'jenis_barang' => 'Jenis ' . chr(64 + $i), // Menghasilkan Jenis A, B, C, D, dst.
+                'total' => rand(100, 300), // Total acak antara 100 dan 300
             ]);
         }
     }
