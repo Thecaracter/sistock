@@ -16,22 +16,25 @@ class ProductSeeder extends Seeder
         DB::table('product')->insert([
             [
                 'name' => 'Produk A',
-                'description' => 'Deskripsi Produk A',
+                'part_code' => 'abc123',
                 'image' => 'produk_a.jpg',
+                'merk' => 'Merk A',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Produk B',
-                'description' => 'Deskripsi Produk B',
+                'part_code' => 'abc456',
                 'image' => 'produk_b.jpg',
+                'merk' => 'Merk B',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
             [
                 'name' => 'Produk C',
-                'description' => 'Deskripsi Produk C',
+                'part_code' => 'abc789',
                 'image' => 'produk_c.jpg',
+                'merk' => 'Merk C',
                 'created_at' => now(),
                 'updated_at' => now(),
             ],

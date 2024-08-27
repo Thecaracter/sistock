@@ -4,7 +4,7 @@
             <div class="sidebar-brand">
                 <a href="/dashboard"> <img alt="image" src="{{ asset('admin/assets/img/logo.png') }}"
                         class="header-logo" />
-                    <span class="logo-name">比赛</span>
+                    <span class="logo-name">SiStock</span>
                 </a>
             </div>
             <ul class="sidebar-menu">
@@ -19,7 +19,7 @@
                 <li class="dropdown {{ Request::path() === 'product' ? 'active' : '' }}"><a class="nav-link"
                         href="/product"><i data-feather="package"></i><span>Product</span></a>
                 </li>
-                <li class="menu-header">User Lomba</li>
+                <li class="menu-header">Manajemen Stock</li>
                 <li class="dropdown {{ Request::path() === 'data-pendaftaran' ? 'active' : '' }}"><a class="nav-link"
                         href="/data-pendaftaran"><i data-feather="clipboard"></i><span>Data Pendaftaran</span></a>
                 </li>

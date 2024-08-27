@@ -17,9 +17,10 @@ class ProductsImport implements ToModel, WithHeadingRow
     public function model(array $row)
     {
         return new Product([
-            'name' => $row['name'],         // Nama kolom dalam Excel
-            'description' => $row['description'],  // Nama kolom dalam Excel
-            'image' => $row['image'],        // Nama kolom dalam Excel (path gambar)
+            'name' => $row['name'],
+            'part_code' => $row['part_code'],
+            'image' => $row['image'],
+            'merk' => $row['merk'],
         ]);
     }
 }

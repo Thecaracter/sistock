@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Exports\ProductsExport;
 use App\Imports\ProductsImport;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
@@ -24,8 +25,9 @@ class ProductController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'part_code' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'merk' => 'nullable|string',
         ]);
 
         try {
@@ -35,8 +37,9 @@ class ProductController extends Controller
 
             Product::create([
                 'name' => $request->name,
-                'description' => $request->description,
+                'part_code' => $request->part_code,
                 'image' => $imageName,
+                'merk' => $request->merk, // Ini tetap sama
             ]);
 
             return redirect()->route('product.index')->with('notification', [
@@ -45,6 +48,9 @@ class ProductController extends Controller
                 'type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('Error creating product: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
+
             return redirect()->route('product.index')->with('notification', [
                 'title' => 'Gagal!',
                 'text' => 'Produk gagal ditambahkan.',
@@ -53,17 +59,20 @@ class ProductController extends Controller
         }
     }
 
+
     public function update(Request $request, Product $product)
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required|string',
+            'part_code' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+            'merk' => 'nullable|string',
         ]);
 
         try {
             $product->name = $request->name;
-            $product->description = $request->description;
+            $product->part_code = $request->part_code;
+            $product->merk = $request->merk;
 
             if ($request->hasFile('image')) {
                 $image = $request->file('image');
@@ -91,6 +100,8 @@ class ProductController extends Controller
                 'type' => 'success',
             ]);
         } catch (\Exception $e) {
+            Log::error('Error creating product: ' . $e->getMessage());
+            Log::error($e->getTraceAsString());
             return redirect()->route('product.index')->with('notification', [
                 'title' => 'Gagal!',
                 'text' => 'Produk gagal diperbarui. Error: ' . $e->getMessage(),

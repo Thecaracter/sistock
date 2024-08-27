@@ -11,7 +11,8 @@ class Product extends Model
     protected $table = 'product';
     protected $fillable = [
         'name',
-        'description',
+        'part_code',
+        'merk',
         'image',
     ];
     public function productEntries()

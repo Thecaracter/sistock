@@ -40,8 +40,9 @@
                                         <tr>
                                             <th class="text-center">No</th>
                                             <th class="text-center">Nama</th>
-                                            <th class="text-center">Deskripsi</th>
+                                            <th class="text-center">Part Kode</th>
                                             <th class="text-center">Gambar</th>
+                                            <th class="text-center">Merk</th>
                                             <th class="text-center">Detail Stock</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -51,11 +52,12 @@
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
                                                 <td class="text-center">{{ $product->name }}</td>
-                                                <td class="text-center">{{ $product->description }}</td>
+                                                <td class="text-center">{{ $product->part_code }}</td>
                                                 <td class="text-center">
                                                     <img src="{{ file_exists(public_path('fotoproduct/' . basename($product->image))) ? asset('fotoproduct/' . basename($product->image)) : asset('foto/notfound.png') }}"
                                                         alt="{{ $product->name }}" style="width: 100px;">
                                                 </td>
+                                                <td class="text-center">{{ $product->merk }}</td>
                                                 <td class="text-center">
                                                     <button type="button" class="btn btn-info" data-toggle="modal"
                                                         data-target="#stockDetailModal{{ $product->id }}">
@@ -108,8 +110,13 @@
                                     required>
                             </div>
                             <div class="form-group">
-                                <label for="description">Deskripsi:</label>
-                                <textarea class="form-control" id="description" name="description" placeholder="Deskripsi" required></textarea>
+                                <label for="part_code">Part Code:</label>
+                                <textarea class="form-control" id="part_code" name="part_code" placeholder="Deskripsi" required></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="merk">Merk:</label>
+                                <input type="text" class="form-control" id="merk" name="merk"
+                                    placeholder="Merk(optional)">
                             </div>
                             <div class="form-group">
                                 <label for="image">Gambar:</label>
@@ -153,8 +160,13 @@
                                         name="name" value="{{ $product->name }}" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="editDescription{{ $product->id }}">Deskripsi:</label>
-                                    <textarea class="form-control" id="editDescription{{ $product->id }}" name="description" required>{{ $product->description }}</textarea>
+                                    <label for="editpart_code{{ $product->id }}">Deskripsi:</label>
+                                    <textarea class="form-control" id="editpart_code{{ $product->id }}" name="part_code" required>{{ $product->part_code }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editMerk{{ $product->id }}">Merk:</label>
+                                    <input type="text" class="form-control" id="editMerk{{ $product->id }}"
+                                        name="merk" value="{{ $product->merk }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="editImage{{ $product->id }}">Gambar:</label>
