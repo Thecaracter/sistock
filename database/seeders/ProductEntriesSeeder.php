@@ -19,9 +19,9 @@ class ProductEntriesSeeder extends Seeder
             ProductEntry::create([
                 'nama_kapal' => 'Kapal Laut ' . $i,
                 'no_permintaan' => 'REQ000' . $i,
-                'tgl_permintaan' => now()->addDays($i), // Menggunakan tanggal saat ini ditambah i hari
-                'jenis_barang' => 'Jenis ' . chr(64 + $i), // Menghasilkan Jenis A, B, C, D, dst.
-                'total' => rand(100, 300), // Total acak antara 100 dan 300
+                'tgl_permintaan' => now()->addDays($i),
+                'jenis_barang' => 'Jenis ' . chr(64 + $i),
+                'total' => intval(rand(10000, 30000) / 100),
             ]);
         }
     }

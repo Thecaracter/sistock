@@ -17,4 +17,8 @@ class ProductEntry extends Model
         'jenis_barang',
         'total',
     ];
+    public function productEntryDetail()
+    {
+        return $this->hasMany(ProductEntryDetail::class);
+    }
 }

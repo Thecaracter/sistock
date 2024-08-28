@@ -16,7 +16,7 @@ return new class extends Migration {
             $table->string('no_permintaan');
             $table->date('tgl_permintaan');
             $table->string('jenis_barang');
-            $table->integer('total');
+            $table->integer('total')->default(0);
             $table->timestamps();
         });
     }

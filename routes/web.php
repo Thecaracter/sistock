@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductEntriesController;
 
 //Auth Routes
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -30,5 +31,14 @@ Route::middleware(['isLogin'])->group(function () {
     Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::post('/import-excel', [ProductController::class, 'importExcel'])->name('products.import.excel');
     Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('products.export.excel');
+
+    //Product Entry Routes
+    Route::get('/product-entries', [ProductEntriesController::class, 'index'])->name('product_entries.index');
+    Route::post('/product-entries/tambah', [ProductEntriesController::class, 'store'])->name('product_entries.store');
+    Route::put('/product-entries/{id}', [ProductEntriesController::class, 'update'])->name('product_entries.update');
+    Route::delete('/product-entries/{id}', [ProductEntriesController::class, 'destroy'])->name('product_entries.destroy');
+    Route::get('product-entries/export', [ProductEntriesController::class, 'export'])->name('product-entries.export');
+    Route::post('product-entries/import', [ProductEntriesController::class, 'import'])->name('product-entries.import');
+
 });
 
