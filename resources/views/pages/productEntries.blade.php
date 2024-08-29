@@ -58,9 +58,7 @@
                                                 <td class="text-center">Rp {{ number_format($entry->total, 2, ',', '.') }}
                                                 </td>
                                                 <td class="text-center">
-                                                    <a href="
-                                                    {{-- {{ route('product_entries.show', $entry->id) }} --}}
-                                                    "
+                                                    <a href="{{ route('product-entry-details.index', $entry->id) }}"
                                                         class="btn btn-primary">
                                                         <i class="fas fa-info-circle"></i> Detail
                                                     </a>

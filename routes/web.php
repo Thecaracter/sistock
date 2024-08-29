@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductEntriesController;
+use App\Http\Controllers\ProductEntryDetailController;
 
 //Auth Routes
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -39,6 +40,14 @@ Route::middleware(['isLogin'])->group(function () {
     Route::delete('/product-entries/{id}', [ProductEntriesController::class, 'destroy'])->name('product_entries.destroy');
     Route::get('product-entries/export', [ProductEntriesController::class, 'export'])->name('product-entries.export');
     Route::post('product-entries/import', [ProductEntriesController::class, 'import'])->name('product-entries.import');
+
+    //Product Entry Detail Routes
+    Route::get('/product-entry-details/{productEntryId}', [ProductEntryDetailController::class, 'index'])->name('product-entry-details.index');
+    Route::get('/product-entry-details/load-data/{productEntryId}', [ProductEntryDetailController::class, 'loadData'])->name('product-entry-details.loadData');
+    Route::post('/product-entry-details', [ProductEntryDetailController::class, 'store'])->name('product-entry-details.store');
+    Route::delete('/product-entry-details/{id}', [ProductEntryDetailController::class, 'destroy']);
+    Route::get('product-entry/export/{id}', [ProductEntryDetailController::class, 'export'])->name('product-entry.export');
+    Route::post('product-entry/import/{id}', [ProductEntryDetailController::class, 'import'])->name('product-entry.import');
 
 });
 
