@@ -5,8 +5,11 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ProductExitController;
 use App\Http\Controllers\ProductEntriesController;
 use App\Http\Controllers\ProductEntryDetailController;
+
+
 
 //Auth Routes
 Route::get('/', [AuthController::class, 'index'])->name('login');
@@ -49,5 +52,12 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('product-entry/export/{id}', [ProductEntryDetailController::class, 'export'])->name('product-entry.export');
     Route::post('product-entry/import/{id}', [ProductEntryDetailController::class, 'import'])->name('product-entry.import');
 
+    //Product Exit Routes
+    Route::get('/product-exits', [ProductExitController::class, 'index'])->name('product_exits.index');
+    Route::post('/product-exits', [ProductExitController::class, 'store'])->name('product_exits.store');
+    Route::put('/product-exits/{id}', [ProductExitController::class, 'update'])->name('product_exits.update');
+    Route::delete('/product-exits/{id}', [ProductExitController::class, 'destroy'])->name('product_exits.destroy');
+    // Rute untuk menampilkan halaman AJAX
+    Route::get('/product-exits/ajax', [ProductExitController::class, 'loadAjaxData'])->name('product_exits.ajax');
 });
 

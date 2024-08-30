@@ -23,8 +23,8 @@
                 <li class="dropdown {{ Request::path() === 'product-entries' ? 'active' : '' }}"><a class="nav-link"
                         href="/product-entries"><i data-feather="clipboard"></i><span>Data Masuk Barang</span></a>
                 </li>
-                <li class="dropdown {{ Request::path() === 'productExits' ? 'active' : '' }}"><a class="nav-link"
-                        href="/productExits"><i data-feather="dollar-sign"></i><span>Data Keluar Barang</span></a>
+                <li class="dropdown {{ Request::path() === 'product-exits' ? 'active' : '' }}"><a class="nav-link"
+                        href="/product-exits"><i data-feather="dollar-sign"></i><span>Data Keluar Barang</span></a>
                 </li>
             </ul>
         </aside>

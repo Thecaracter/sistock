@@ -79,68 +79,58 @@ class ProductEntriesController extends Controller
 
     public function update(Request $request, $id)
     {
-        try {
-            $validator = Validator::make($request->all(), [
-                'nama_kapal' => 'required|string|max:255',
-                'no_permintaan' => 'required|string|max:255',
-                'tgl_permintaan' => 'required|date',
-                'jenis_barang' => 'required|string|max:255',
-                'version' => 'required|integer',
-            ]);
+        $validator = Validator::make($request->all(), [
+            'nama_kapal' => 'required|string|max:255',
+            'no_permintaan' => 'required|string|max:255',
+            'tgl_permintaan' => 'required|date',
+            'jenis_barang' => 'required|string|max:255',
+        ]);
 
-            if ($validator->fails()) {
-                throw new ValidationException($validator);
-            }
-
-            $attempts = 0;
-            $maxAttempts = 5;
-            $waitTime = 100; // milliseconds
-
-            while ($attempts < $maxAttempts) {
-                try {
-                    $result = DB::transaction(function () use ($id, $validator) {
-                        $productEntry = ProductEntry::lockForUpdate()->findOrFail($id);
-
-                        if ($productEntry->version != $validator->validated()['version']) {
-                            throw new \Exception('Version mismatch');
-                        }
-
-                        $productEntry->version++;
-                        $productEntry->update($validator->validated());
-
-                        return $productEntry;
-                    });
-
-                    return redirect()->route('product_entries.index')->with('notification', [
-                        'title' => 'Success!',
-                        'text' => 'Product Entry has been updated successfully.',
-                        'type' => 'success'
-                    ]);
-                } catch (\Exception $e) {
-                    $attempts++;
-                    if ($attempts >= $maxAttempts || !($e->getMessage() === 'Version mismatch')) {
-                        throw $e;
-                    }
-                    usleep($waitTime * 1000);
-                    $waitTime *= 2; // Exponential backoff
-                }
-            }
-        } catch (ValidationException $e) {
+        if ($validator->fails()) {
             return redirect()->route('product_entries.index')
-                ->withErrors($e->validator)
+                ->withErrors($validator)
                 ->withInput()
                 ->with('notification', [
                     'title' => 'Validation Error!',
                     'text' => 'Please check the form for errors.',
                     'type' => 'error'
                 ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to update product entry after multiple attempts: ' . $e->getMessage());
-            return redirect()->route('product_entries.index')->with('notification', [
-                'title' => 'Error!',
-                'text' => 'Failed to update Product Entry. Please try again later.',
-                'type' => 'error'
-            ]);
+        }
+
+        $attempts = 0;
+        $maxAttempts = 5;
+        $waitTime = 100; // milliseconds
+
+        while ($attempts < $maxAttempts) {
+            try {
+                $result = DB::transaction(function () use ($id, $validator) {
+                    // Menggunakan lockForUpdate untuk mengunci baris selama transaksi
+                    $productEntry = ProductEntry::lockForUpdate()->findOrFail($id);
+
+                    // Update data tanpa mengecek versi
+                    $productEntry->update($validator->validated());
+
+                    return $productEntry;
+                });
+
+                return redirect()->route('product_entries.index')->with('notification', [
+                    'title' => 'Success!',
+                    'text' => 'Product Entry has been updated successfully.',
+                    'type' => 'success'
+                ]);
+            } catch (\Exception $e) {
+                $attempts++;
+                if ($attempts >= $maxAttempts) {
+                    Log::error('Failed to update product entry after multiple attempts: ' . $e->getMessage());
+                    return redirect()->route('product_entries.index')->with('notification', [
+                        'title' => 'Error!',
+                        'text' => 'Failed to update Product Entry. Please try again later.',
+                        'type' => 'error'
+                    ]);
+                }
+                usleep($waitTime * 1000);
+                $waitTime *= 2; // Exponential backoff
+            }
         }
     }
 
