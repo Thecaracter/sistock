@@ -16,6 +16,10 @@
                                     data-target="#importExcelModal">
                                     <i class="fas fa-file-excel"></i> Import Excel
                                 </button>
+                                <button type="button" class="btn btn-info"
+                                    onclick="window.location.href='{{ route('product_exits.export') }}'">
+                                    <i class="fas fa-download"></i> Export Excel
+                                </button>
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#createProductExitModal">
                                     <i class="fas fa-plus"></i> Tambah Product Exit
@@ -170,65 +174,115 @@
         @endforeach
     </div>
 
+    <!-- Tambah modal untuk Import -->
+    <div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="importExcelModalLabel">Import Data Product Exits dari Excel</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form action="{{ route('product_exits.import') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="file">Pilih file Excel:</label>
+                            <input type="file" class="form-control" id="file" name="file" required>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
+                        <button type="submit" class="btn btn-primary">Import</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
+        let isRefreshing = true; // Flag untuk mengendalikan refresh
+
         function confirmDelete(id) {
-            if (confirm('Are you sure you want to delete this product exit?')) {
-                document.getElementById('deleteForm-' + id).submit();
-            }
-        }
-
-        // Script for searching within the table
-        document.getElementById('searchInput').addEventListener('input', function() {
-            let filter = this.value.toLowerCase();
-            let rows = document.querySelectorAll('tbody tr');
-            rows.forEach(row => {
-                let columns = row.querySelectorAll('td');
-                let match = Array.from(columns).some(column => column.textContent.toLowerCase().includes(
-                    filter));
-                row.style.display = match ? '' : 'none';
-            });
-        });
-
-        // Function to refresh the data via AJAX
-        function refreshProductExits() {
-            $.ajax({
-                url: '{{ route('product_exits.index') }}', // Assuming this is your route for fetching data via AJAX
-                type: 'GET',
-                dataType: 'json',
-                success: function(data) {
-                    let tableBody = $('#productExitTableBody');
-                    tableBody.empty();
-                    data.forEach((exit, index) => {
-                        tableBody.append(`
-                        <tr>
-                            <td class="text-center">${index + 1}</td>
-                            <td class="text-center">${exit.nama_kapal}</td>
-                            <td class="text-center">${exit.no_exit}</td>
-                            <td class="text-center">${new Date(exit.tgl_exit).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
-                            <td class="text-center">${exit.jenis_barang}</td>
-                            <td class="text-center">${parseFloat(exit.total).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                            <td class="align-middle text-center">
-                                <span>
-                                    <button data-toggle="modal" data-target="#editProductExitModal${exit.id}" type="button" class="btn btn-info">Edit</button>
-                                    <form id="deleteForm-${exit.id}" method="post" action="{{ url('product_exits') }}/${exit.id}" style="display:inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('${exit.id}')">Delete</button>
-                                    </form>
-                                </span>
-                            </td>
-                        </tr>
-                    `);
-                    });
-                },
-                error: function(err) {
-                    console.error('Error fetching product exits:', err);
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    isRefreshing = false; // Hentikan refresh
+                    document.getElementById('deleteForm-' + id).submit();
                 }
             });
         }
 
-        // Refresh the product exits every second
-        setInterval(refreshProductExits, 2000);
+        // Fungsi pencarian dengan debounce
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('input', function() {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                let filter = this.value.toLowerCase();
+                let rows = document.querySelectorAll('tbody tr');
+                rows.forEach(row => {
+                    let columns = row.querySelectorAll('td');
+                    let match = Array.from(columns).some(column => column.textContent.toLowerCase()
+                        .includes(filter));
+                    row.style.display = match ? '' : 'none';
+                });
+            }, 300); // delay 300ms untuk debounce
+        });
+
+        // Fungsi untuk me-refresh data melalui AJAX jika tidak ada input pencarian
+        function refreshProductExits() {
+            let searchInput = document.getElementById('searchInput').value.trim();
+            if (searchInput === '' && isRefreshing) { // Hanya refresh jika input pencarian kosong dan refresh diizinkan
+                $.ajax({
+                    url: '{{ route('product_exits.index') }}',
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        let tableBody = $('#productExitTableBody');
+                        tableBody.empty();
+                        data.forEach((exit, index) => {
+                            tableBody.append(`
+                                <tr>
+                                    <td class="text-center">${index + 1}</td>
+                                    <td class="text-center">${exit.nama_kapal}</td>
+                                    <td class="text-center">${exit.no_exit}</td>
+                                    <td class="text-center">${new Date(exit.tgl_exit).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
+                                    <td class="text-center">${exit.jenis_barang}</td>
+                                    <td class="text-center">${parseFloat(exit.total).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                                    <td class="align-middle text-center">
+                                        <span>
+                                            <button data-toggle="modal" data-target="#editProductExitModal${exit.id}" type="button" class="btn btn-info">Edit</button>
+                                            <form id="deleteForm-${exit.id}" method="post" action="{{ url('product_exits') }}/${exit.id}" style="display:inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-danger" onclick="confirmDelete('${exit.id}')">Delete</button>
+                                            </form>
+                                        </span>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                        isRefreshing = true; // Izinkan refresh setelah berhasil
+                    },
+                    error: function(err) {
+                        console.error('Error fetching product exits:', err);
+                        isRefreshing = true; // Izinkan refresh meskipun terjadi kesalahan
+                    }
+                });
+            }
+        }
+
+        // Refresh the product exits every 3 seconds
+        let refreshInterval = setInterval(refreshProductExits, 3000);
 
         @if (session('notification'))
             $(document).ready(function() {

@@ -4,8 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ProductExit;
 use Illuminate\Http\Request;
+use App\Exports\ProductExitExport;
+use App\Imports\ProductExitImport;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -28,6 +31,7 @@ class ProductExitController extends Controller
     public function store(Request $request)
     {
         try {
+            // Validasi input
             $validator = Validator::make($request->all(), [
                 'nama_kapal' => 'required|string|max:255',
                 'no_exit' => 'required|string|max:255|unique:product_exits,no_exit',
@@ -39,6 +43,9 @@ class ProductExitController extends Controller
                 throw new ValidationException($validator);
             }
 
+            // Logging untuk memulai proses penyimpanan
+            Log::info('Attempting to store new ProductExit', $request->all());
+
             $attempts = 0;
             $maxAttempts = 5;
             $waitTime = 100; // milliseconds
@@ -49,6 +56,9 @@ class ProductExitController extends Controller
                         return ProductExit::create($validator->validated());
                     });
 
+                    // Logging jika penyimpanan berhasil
+                    Log::info('ProductExit successfully created', ['id' => $productExit->id]);
+
                     return redirect()->route('product_exits.index')->with([
                         'notification' => [
                             'type' => 'success',
@@ -58,14 +68,26 @@ class ProductExitController extends Controller
                     ]);
                 } catch (\Exception $e) {
                     $attempts++;
+                    Log::warning('Attempt ' . $attempts . ' failed to create ProductExit', [
+                        'error' => $e->getMessage(),
+                        'waitTime' => $waitTime
+                    ]);
+
                     if ($attempts >= $maxAttempts) {
                         throw $e;
                     }
+
                     usleep($waitTime * 1000);
                     $waitTime *= 2; // Exponential backoff
                 }
             }
         } catch (ValidationException $e) {
+            // Logging untuk kesalahan validasi
+            Log::error('Validation failed for ProductExit creation', [
+                'errors' => $e->validator->errors(),
+                'input' => $request->all(),
+            ]);
+
             return redirect()->route('product_exits.index')->with([
                 'notification' => [
                     'type' => 'error',
@@ -75,7 +97,11 @@ class ProductExitController extends Controller
                 'errors' => $e->validator->errors(),
             ]);
         } catch (\Exception $e) {
-            Log::error('Failed to create product exit after multiple attempts: ' . $e->getMessage());
+            // Logging untuk kesalahan umum
+            Log::error('Failed to create ProductExit after multiple attempts: ' . $e->getMessage(), [
+                'input' => $request->all(),
+            ]);
+
             return redirect()->route('product_exits.index')->with([
                 'notification' => [
                     'type' => 'error',
@@ -85,7 +111,6 @@ class ProductExitController extends Controller
             ]);
         }
     }
-
 
     public function update(Request $request, $id)
     {
@@ -174,35 +199,42 @@ class ProductExitController extends Controller
 
     public function destroy($id)
     {
-        DB::beginTransaction();
-        try {
-            $productExit = ProductExit::findOrFail($id);
+        $productExit = ProductExit::find($id);
 
-            // Hapus detail terkait terlebih dahulu
-            $productExit->productExitDetails()->delete();
-
-            // Kemudian hapus product exit
+        if ($productExit) {
             $productExit->delete();
-
-            DB::commit();
-
-            return redirect()->route('product_exits.index')->with([
-                'notification' => [
-                    'type' => 'success',
-                    'title' => 'Success',
-                    'message' => 'Product Exit and its details have been deleted successfully.',
-                ],
+            return redirect()->route('product_exits.index')->with('notification', [
+                'type' => 'success',
+                'title' => 'Success',
+                'message' => 'Product Exit has been deleted successfully.',
             ]);
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error('Failed to delete product exit: ' . $e->getMessage());
-            return redirect()->route('product_exits.index')->with([
-                'notification' => [
-                    'type' => 'error',
-                    'title' => 'Error',
-                    'message' => 'Failed to delete Product Exit.',
-                ],
+        } else {
+            return redirect()->route('product_exits.index')->with('notification', [
+                'type' => 'error',
+                'title' => 'Error',
+                'message' => 'Product Exit not found.',
             ]);
         }
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xls,xlsx'
+        ]);
+
+        Excel::import(new ProductExitImport, $request->file('file'));
+
+        return redirect()->route('product_exits.index')->with('notification', [
+            'type' => 'success',
+            'title' => 'Berhasil!',
+            'message' => 'Data berhasil diimpor dari Excel.'
+        ]);
+    }
+
+    // Fungsi untuk meng-export data ke Excel
+    public function export()
+    {
+        return Excel::download(new ProductExitExport, 'product_exits.xlsx');
     }
 }

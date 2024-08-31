@@ -57,7 +57,10 @@ Route::middleware(['isLogin'])->group(function () {
     Route::post('/product-exits', [ProductExitController::class, 'store'])->name('product_exits.store');
     Route::put('/product-exits/{id}', [ProductExitController::class, 'update'])->name('product_exits.update');
     Route::delete('/product-exits/{id}', [ProductExitController::class, 'destroy'])->name('product_exits.destroy');
+
     // Rute untuk menampilkan halaman AJAX
     Route::get('/product-exits/ajax', [ProductExitController::class, 'loadAjaxData'])->name('product_exits.ajax');
+    Route::post('product_exits/import', [ProductExitController::class, 'import'])->name('product_exits.import');
+    Route::get('product_exits/export', [ProductExitController::class, 'export'])->name('product_exits.export');
 });
 
