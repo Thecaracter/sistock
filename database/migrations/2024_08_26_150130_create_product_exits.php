@@ -1,55 +1,31 @@
 <?php
 
-namespace App\Imports;
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
-use App\Models\ProductExit;
-use Maatwebsite\Excel\Concerns\ToModel;
-use PhpOffice\PhpSpreadsheet\Shared\Date;
-use Maatwebsite\Excel\Concerns\WithHeadings;
-
-class ProductExitImport implements ToModel, WithHeadings
-{
+return new class extends Migration {
     /**
-     * Fungsi untuk membuat model dari setiap baris.
-     *
-     * @param array $row
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * Run the migrations.
      */
-    public function model(array $row)
+    public function up(): void
     {
-        // Pastikan tanggal dalam format numerik dan valid
-        $date = $row[2];
-        if (is_string($date) && !strtotime($date)) {
-            $date = Date::excelToDateTimeObject($date);
-        } else {
-            $date = Date::excelToDateTimeObject($date);
-        }
-
-        // Konversi kolom total menjadi integer jika diperlukan
-        $total = is_numeric($row[4]) ? (int) round((float) $row[4]) : 0;
-
-        return new ProductExit([
-            'nama_kapal' => $row[0], // Menggunakan kolom pertama
-            'no_exit' => $row[1],    // Menggunakan kolom kedua
-            'tgl_exit' => $date, // Pastikan ini adalah objek DateTime
-            'jenis_barang' => $row[3], // Menggunakan kolom keempat
-            'total' => $total, // Pastikan ini adalah integer
-        ]);
+        Schema::create('product_exits', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_kapal');
+            $table->string('no_exit');
+            $table->date('tgl_exit');
+            $table->string('jenis_barang');
+            $table->integer('total')->default(0);
+            $table->timestamps();
+        });
     }
 
     /**
-     * Fungsi untuk mendapatkan heading dari file Excel.
-     *
-     * @return array
+     * Reverse the migrations.
      */
-    public function headings(): array
+    public function down(): void
     {
-        return [
-            'nama kapal',
-            'no exit',
-            'tanggal exit',
-            'jenis barang',
-            'total',
-        ];
+        Schema::dropIfExists('product_exits');
     }
-}
+};
