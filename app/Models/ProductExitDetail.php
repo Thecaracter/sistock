@@ -13,7 +13,7 @@ class ProductExitDetail extends Model
 
     protected $fillable = [
         'product_exit_id',
-        'product_entrie_detail_id',
+        'product_entry_detail_id',
         'quantity',
         'price',
         'total',
@@ -33,7 +33,7 @@ class ProductExitDetail extends Model
      */
     public function productEntryDetail()
     {
-        return $this->belongsTo(ProductEntryDetail::class);
+        return $this->belongsTo(ProductEntryDetail::class, 'product_entry_detail_id');
     }
 
     /**

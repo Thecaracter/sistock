@@ -7,6 +7,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductExitController;
 use App\Http\Controllers\ProductEntriesController;
+use App\Http\Controllers\ProductExitDetailController;
 use App\Http\Controllers\ProductEntryDetailController;
 
 
@@ -62,5 +63,10 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('/product-exits/ajax', [ProductExitController::class, 'loadAjaxData'])->name('product_exits.ajax');
     Route::post('product_exits/import', [ProductExitController::class, 'import'])->name('product_exits.import');
     Route::get('product_exits/export', [ProductExitController::class, 'export'])->name('product_exits.export');
+
+    // Product Exit Detail Routes
+    Route::get('product-exit/{productExitId}/details', [ProductExitDetailController::class, 'index'])->name('productExitDetails.index');
+    Route::post('product-exit/{productExitId}/details', [ProductExitDetailController::class, 'store'])->name('productExitDetails.store');
+    Route::delete('/product-exit-detail/{id}', [ProductExitDetailController::class, 'destroy'])->name('productExitDetails.destroy');
 });
 

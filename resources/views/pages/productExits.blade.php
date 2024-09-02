@@ -41,6 +41,7 @@
                                             <th class="text-center">Tgl Exit</th>
                                             <th class="text-center">Jenis Barang</th>
                                             <th class="text-center">Total</th>
+                                            <th class="text-center">Detail</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -54,6 +55,11 @@
                                                     {{ \Carbon\Carbon::parse($exit->tgl_exit)->format('d F Y') }}</td>
                                                 <td class="text-center">{{ $exit->jenis_barang }}</td>
                                                 <td class="text-center">{{ number_format($exit->total, 2, ',', '.') }}</td>
+                                                <td class="text-center">
+                                                    <a href="{{ route('productExitDetails.index', ['productExitId' => $exit->id]) }}"
+                                                        class="btn btn-primary"> <i
+                                                            class="fas fa-info-circle"></i>Detail</a>
+                                                </td>
                                                 <td class="align-middle text-center">
                                                     <span>
                                                         <button data-toggle="modal"
@@ -251,25 +257,30 @@
                         tableBody.empty();
                         data.forEach((exit, index) => {
                             tableBody.append(`
-                                <tr>
-                                    <td class="text-center">${index + 1}</td>
-                                    <td class="text-center">${exit.nama_kapal}</td>
-                                    <td class="text-center">${exit.no_exit}</td>
-                                    <td class="text-center">${new Date(exit.tgl_exit).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
-                                    <td class="text-center">${exit.jenis_barang}</td>
-                                    <td class="text-center">${parseFloat(exit.total).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                                    <td class="align-middle text-center">
-                                        <span>
-                                            <button data-toggle="modal" data-target="#editProductExitModal${exit.id}" type="button" class="btn btn-info">Edit</button>
-                                            <form id="deleteForm-${exit.id}" method="post" action="{{ url('product_exits') }}/${exit.id}" style="display:inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="button" class="btn btn-danger" onclick="confirmDelete('${exit.id}')">Delete</button>
-                                            </form>
-                                        </span>
-                                    </td>
-                                </tr>
-                            `);
+                        <tr>
+                            <td class="text-center">${index + 1}</td>
+                            <td class="text-center">${exit.nama_kapal}</td>
+                            <td class="text-center">${exit.no_exit}</td>
+                            <td class="text-center">${new Date(exit.tgl_exit).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</td>
+                            <td class="text-center">${exit.jenis_barang}</td>
+                            <td class="text-center">${parseFloat(exit.total).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                            <td class="text-center">
+                                <a href="/product-exit/${exit.id}/details" class="btn btn-primary">
+                                    <i class="fas fa-info-circle"></i> Detail
+                                </a>
+                            </td>
+                            <td class="align-middle text-center">
+                                <span>
+                                    <button data-toggle="modal" data-target="#editProductExitModal${exit.id}" type="button" class="btn btn-info">Edit</button>
+                                    <form id="deleteForm-${exit.id}" method="post" action="{{ url('product_exits') }}/${exit.id}" style="display:inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="button" class="btn btn-danger" onclick="confirmDelete('${exit.id}')">Delete</button>
+                                    </form>
+                                </span>
+                            </td>
+                        </tr>
+                    `);
                         });
                         isRefreshing = true; // Izinkan refresh setelah berhasil
                     },

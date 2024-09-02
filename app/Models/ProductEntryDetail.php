@@ -17,7 +17,7 @@ class ProductEntryDetail extends Model
         'quantity',
         'price',
         'total',
-        'stock', // pastikan stock ada di fillable
+        'stock',
     ];
 
     protected static function boot()
@@ -25,7 +25,7 @@ class ProductEntryDetail extends Model
         parent::boot();
 
         static::creating(function ($model) {
-            $model->stock = $model->quantity; // Set stock ke nilai quantity
+            $model->stock = $model->quantity;
         });
     }
 

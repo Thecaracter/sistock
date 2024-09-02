@@ -76,8 +76,16 @@ class ProductEntryDetailController extends Controller
         // Temukan product entry yang terkait
         $productEntry = ProductEntry::find($detail->product_entry_id);
 
-        // Kurangi total dari product entry berdasarkan total dari detail ini
-        $productEntry->total -= $detail->total;
+        // Hitung total baru setelah pengurangan
+        $newTotal = $productEntry->total - $detail->total;
+
+        // Pastikan total tidak negatif
+        if ($newTotal < 0) {
+            $newTotal = 0;
+        }
+
+        // Update total di product entry
+        $productEntry->total = $newTotal;
         $productEntry->save();
 
         // Hapus detail entry
