@@ -33,6 +33,11 @@
                             </div>
                             <br>
 
+                            <div class="search-element">
+                                <input id="searchInput" class="form-control" type="search" placeholder="Search"
+                                    aria-label="Search">
+                            </div>
+                            <br>
                             <div class="table-responsive">
                                 <table id="detailsTable" class="table table-bordered zero-configuration">
                                     <thead>
@@ -73,7 +78,8 @@
                         <div class="modal-body">
                             <div class="form-group">
                                 <label for="product_id">Product:</label>
-                                <select class="form-control" id="product_id" name="product_id" required>
+                                <select class="form-control select2" id="product_id" name="product_id" required>
+                                    <option value="">Select a product</option>
                                     @foreach ($products as $product)
                                         <option value="{{ $product->id }}">{{ $product->name }}</option>
                                     @endforeach
@@ -130,11 +136,25 @@
                 const productEntryId = @json($productEntryId);
                 const products = @json($products);
 
+                // Initialize Select2
+                $('.select2').select2({
+                    theme: 'bootstrap4',
+                    placeholder: 'Select a product',
+                    allowClear: true
+                });
+
                 // Load data initially
                 loadData();
 
-                // Set interval to reload data every 2 seconds
-                const dataLoadInterval = setInterval(loadData, 2000);
+                let dataLoadInterval;
+
+                // Function to start the interval
+                function startDataLoadInterval() {
+                    dataLoadInterval = setInterval(loadData, 2000);
+                }
+
+                // Start the interval initially
+                startDataLoadInterval();
 
                 function loadData() {
                     $.get(`/product-entry-details/load-data/${productEntryId}`, function(data) {
@@ -175,13 +195,14 @@
 
                     const formData = $(this).serialize();
                     const priceString = $('#price').val().replace(/\./g, '').replace('Rp ',
-                        ''); // Clean and convert price
+                    ''); // Clean and convert price
                     const price = parseInt(priceString); // Convert to integer
 
                     $.post('/product-entry-details', formData + '&price=' + price, function(data) {
                         Swal.fire('Berhasil', data.message, 'success');
                         $('#createDetailModal').modal('hide');
                         $('#createDetailForm')[0].reset();
+                        $('.select2').val(null).trigger('change'); // Reset Select2
                         loadData(); // Reload data after adding
                     }).fail(function(xhr) {
                         Swal.fire('Error', xhr.responseJSON.message, 'error');
@@ -225,6 +246,23 @@
                 $('#price').on('input', function() {
                     let value = $(this).val().replace(/\D/g, ''); // Remove non-digit characters
                     $(this).val(formatRupiah(value)); // Format to Rupiah
+                });
+
+                // Search functionality
+                $('#searchInput').on('input', function() {
+                    var value = $(this).val().toLowerCase();
+
+                    // Clear the interval if there's input in the search field
+                    if (value.length > 0) {
+                        clearInterval(dataLoadInterval);
+                    } else {
+                        // Restart the interval if the search field is empty
+                        startDataLoadInterval();
+                    }
+
+                    $('table tbody tr').filter(function() {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                    });
                 });
             });
         </script>

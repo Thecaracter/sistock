@@ -6,7 +6,11 @@ use App\Models\ProductExit;
 use Illuminate\Http\Request;
 use App\Models\ProductExitDetail;
 use App\Models\ProductEntryDetail;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ProductExitDetailsExport;
+use App\Imports\ProductExitDetailsImport;
 
 class ProductExitDetailController extends Controller
 {
@@ -113,6 +117,39 @@ class ProductExitDetailController extends Controller
         return response()->json([
             'message' => 'Detail exit produk berhasil dihapus.'
         ]);
+    }
+    public function export($productExitId)
+    {
+        return Excel::download(new ProductExitDetailsExport($productExitId), 'product_exit_details.xlsx');
+    }
+
+    public function import(Request $request, $productExitId)
+    {
+        Log::info('Starting import process for ProductExit ID: ' . $productExitId);
+
+        $request->validate([
+            'excel_file' => 'required|mimes:xlsx,xls',
+        ]);
+
+        Log::info('File validation passed');
+
+        DB::beginTransaction();
+
+        try {
+            Log::info('Beginning Excel import');
+            Excel::import(new ProductExitDetailsImport($productExitId), $request->file('excel_file'));
+
+            DB::commit();
+            Log::info('Import successful, database transaction committed');
+
+            return redirect()->back()->with('success', 'Data imported successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Import error: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            return redirect()->back()->with('error', 'Error importing data: ' . $e->getMessage());
+        }
     }
 
 }

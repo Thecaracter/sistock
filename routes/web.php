@@ -68,5 +68,8 @@ Route::middleware(['isLogin'])->group(function () {
     Route::get('product-exit/{productExitId}/details', [ProductExitDetailController::class, 'index'])->name('productExitDetails.index');
     Route::post('product-exit/{productExitId}/details', [ProductExitDetailController::class, 'store'])->name('productExitDetails.store');
     Route::delete('/product-exit-detail/{id}', [ProductExitDetailController::class, 'destroy'])->name('productExitDetails.destroy');
+
+    Route::get('product-exit-details/{productExit}/export', [ProductExitDetailController::class, 'export'])->name('product-exit-details.export');
+    Route::post('product-exit-details/{productExit}/import', [ProductExitDetailController::class, 'import'])->name('product-exit-details.import');
 });
 

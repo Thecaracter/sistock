@@ -16,6 +16,14 @@
                                     data-target="#selectProductEntryModal">
                                     <i class="fas fa-plus"></i> Tambah Detail Exit Produk
                                 </button>
+                                <a href="{{ route('product-exit-details.export', $productExit->id) }}"
+                                    class="btn btn-success">
+                                    <i class="fas fa-file-excel"></i> Export Excel
+                                </a>
+                                <button type="button" class="btn btn-info" data-toggle="modal"
+                                    data-target="#importExcelModal">
+                                    <i class="fas fa-file-import"></i> Import Excel
+                                </button>
                             </div>
                             <br>
                             <div class="search-element">
@@ -49,7 +57,6 @@
                                                         Hapus
                                                     </button>
                                                 </td>
-
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -57,6 +64,35 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Import Excel Modal -->
+        <div class="modal fade" id="importExcelModal" tabindex="-1" role="dialog" aria-labelledby="importExcelModalLabel"
+            aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="importExcelModalLabel">Import Excel</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <form action="{{ route('product-exit-details.import', $productExit->id) }}" method="POST"
+                        enctype="multipart/form-data">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label for="excel_file">Choose Excel File</label>
+                                <input type="file" class="form-control-file" id="excel_file" name="excel_file" required>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Import</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -94,7 +130,8 @@
                                             <td class="text-right">Rp {{ number_format($entry->price, 0, ',', '.') }}</td>
                                             <td class="text-center">
                                                 <button class="btn btn-success select-product-btn"
-                                                    data-id="{{ $entry->id }}" data-name="{{ $entry->product->name }}"
+                                                    data-id="{{ $entry->id }}"
+                                                    data-name="{{ $entry->product->name }}"
                                                     data-price="{{ $entry->price }}">
                                                     Pilih
                                                 </button>
