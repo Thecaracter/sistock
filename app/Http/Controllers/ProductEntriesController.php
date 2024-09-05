@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\DomPDF\PDF;
 use App\Models\ProductEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -180,4 +181,17 @@ class ProductEntriesController extends Controller
 
         return redirect()->back()->with('success', 'Data berhasil diimpor.');
     }
+    public function show($id, Request $request)
+    {
+        $productEntry = ProductEntry::with('productEntryDetail.product')->findOrFail($id);
+
+        // Get the submitted_by and approved_by from the request
+        $submitted_by = $request->input('submitted_by');
+        $approved_by = $request->input('approved_by');
+
+        // Pass these values to the view
+        return view('print.printDataMasuk', compact('productEntry', 'submitted_by', 'approved_by'));
+    }
+
+
 }

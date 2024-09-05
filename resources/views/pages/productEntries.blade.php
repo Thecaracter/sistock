@@ -42,6 +42,7 @@
                                             <th class="text-center">Jenis Barang</th>
                                             <th class="text-center">Total</th>
                                             <th class="text-center">Detail Masuk</th>
+                                            <th class="text-center">Print</th>
                                             <th class="text-center">Action</th>
                                         </tr>
                                     </thead>
@@ -62,6 +63,12 @@
                                                         class="btn btn-primary">
                                                         <i class="fas fa-info-circle"></i> Detail
                                                     </a>
+                                                </td>
+                                                <td class="text-center">
+                                                    <button type="button" class="btn btn-success" data-toggle="modal"
+                                                        data-target="#printModal{{ $entry->id }}">
+                                                        <i class="fas fa-print"></i> Print
+                                                    </button>
                                                 </td>
                                                 <td class="align-middle text-center">
                                                     <span>
@@ -175,6 +182,38 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Update</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <!-- Print Modal -->
+            <div class="modal fade" id="printModal{{ $entry->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="printModalLabel{{ $entry->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="printModalLabel{{ $entry->id }}">Input Before Print</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('product-entries.print', $entry->id) }}" method="GET">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="submitted_by">Diajukan Oleh:</label>
+                                    <input type="text" class="form-control" id="submitted_by" name="submitted_by"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="approved_by">Diketahui Atasan Langsung:</label>
+                                    <input type="text" class="form-control" id="approved_by" name="approved_by"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Print</button>
                             </div>
                         </form>
                     </div>

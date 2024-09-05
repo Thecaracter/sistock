@@ -45,6 +45,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::delete('/product-entries/{id}', [ProductEntriesController::class, 'destroy'])->name('product_entries.destroy');
     Route::get('product-entries/export', [ProductEntriesController::class, 'export'])->name('product-entries.export');
     Route::post('product-entries/import', [ProductEntriesController::class, 'import'])->name('product-entries.import');
+    Route::get('/product-entries/{id}/print', [ProductEntriesController::class, 'show'])->name('product-entries.print');
 
     //Product Entry Detail Routes
     Route::get('/product-entry-details/{productEntryId}', [ProductEntryDetailController::class, 'index'])->name('product-entry-details.index');
