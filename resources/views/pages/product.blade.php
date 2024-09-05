@@ -39,6 +39,7 @@
                                     <thead>
                                         <tr>
                                             <th class="text-center">No</th>
+                                            <th class="text-center">Code Barang</th>
                                             <th class="text-center">Nama</th>
                                             <th class="text-center">Part Kode</th>
                                             <th class="text-center">Gambar</th>
@@ -51,6 +52,7 @@
                                         @foreach ($products as $index => $product)
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
+                                                <td class="text-center">{{ $product->code_barang }}</td>
                                                 <td class="text-center">{{ $product->name }}</td>
                                                 <td class="text-center">{{ $product->part_code }}</td>
                                                 <td class="text-center">
@@ -105,13 +107,18 @@
                         @csrf
                         <div class="modal-body">
                             <div class="form-group">
+                                <label for="code_barang">Code Barang:</label>
+                                <input type="text" class="form-control" id="code_barang" name="code_barang"
+                                    placeholder="Code Barang" required>
+                            </div>
+                            <div class="form-group">
                                 <label for="name">Nama:</label>
-                                <input type="text" class="form-control" id="name" name="name" placeholder="Nama"
-                                    required>
+                                <input type="text" class="form-control" id="name" name="name"
+                                    placeholder="Nama" required>
                             </div>
                             <div class="form-group">
                                 <label for="part_code">Part Code:</label>
-                                <textarea class="form-control" id="part_code" name="part_code" placeholder="Deskripsi" required></textarea>
+                                <textarea class="form-control" id="part_code" name="part_code" placeholder="Part Code" required></textarea>
                             </div>
                             <div class="form-group">
                                 <label for="merk">Merk:</label>
@@ -154,6 +161,11 @@
                             @csrf
                             @method('PUT')
                             <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="editCodeBarang{{ $product->id }}">Code Barang:</label>
+                                    <input type="text" class="form-control" id="editCodeBarang{{ $product->id }}"
+                                        name="code_barang" value="{{ $product->code_barang }}" required>
+                                </div>
                                 <div class="form-group">
                                     <label for="editName{{ $product->id }}">Nama:</label>
                                     <input type="text" class="form-control" id="editName{{ $product->id }}"

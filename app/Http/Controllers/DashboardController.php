@@ -30,7 +30,15 @@ class DashboardController extends Controller
         $query = ProductExitDetail::select('product_exits_detail.*', 'product_entries_detail.price as entry_price')
             ->join('product_entries_detail', 'product_exits_detail.product_entry_detail_id', '=', 'product_entries_detail.id');
 
-        // Prepare to collect product exits
+        // Apply date filters based on the selected period
+        if ($period == 'month') {
+            $query->whereYear('exit_date', $year)->whereMonth('exit_date', $month);
+        } elseif ($period == 'year') {
+            $query->whereYear('exit_date', $year);
+        }
+        // For 'all' period, we don't need to add any date constraints
+
+        // Get product exits
         $productExits = $query->get();
 
         // Calculate net income and prepare income data

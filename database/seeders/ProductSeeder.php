@@ -15,6 +15,7 @@ class ProductSeeder extends Seeder
     {
         DB::table('product')->insert([
             [
+                'code_barang' => 'AAA123',
                 'name' => 'Produk A',
                 'part_code' => 'abc123',
                 'image' => 'produk_a.jpg',
@@ -23,6 +24,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'code_barang' => 'BBB456',
                 'name' => 'Produk B',
                 'part_code' => 'abc456',
                 'image' => 'produk_b.jpg',
@@ -31,6 +33,7 @@ class ProductSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
+                'code_barang' => 'CCC789',
                 'name' => 'Produk C',
                 'part_code' => 'abc789',
                 'image' => 'produk_c.jpg',

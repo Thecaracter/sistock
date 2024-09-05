@@ -10,6 +10,7 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Detail Exit Produk untuk {{ $productExit->no_exit }}</h4>
+                            <p><strong>Total:</strong> <span id="entryTotal"></span></p>
                             <br>
                             <div class="align-right text-right">
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
@@ -203,7 +204,7 @@
                             <div class="form-group">
                                 <label for="price">Harga</label>
                                 <input type="number" name="price" id="price" class="form-control" min="0"
-                                    step="0.01" required>
+                                    step="0.01" required readonly>
                             </div>
                             <div class="form-group">
                                 <label for="total">Total</label>

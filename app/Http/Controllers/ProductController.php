@@ -39,6 +39,7 @@ class ProductController extends Controller
             'part_code' => 'required|string',
             'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
             'merk' => 'nullable|string',
+            'code_barang' => 'required|string',
         ]);
 
         try {
@@ -50,7 +51,8 @@ class ProductController extends Controller
                 'name' => $request->name,
                 'part_code' => $request->part_code,
                 'image' => $imageName,
-                'merk' => $request->merk, // Ini tetap sama
+                'merk' => $request->merk,
+                'code_barang' => $request->code_barang
             ]);
 
             return redirect()->route('product.index')->with('notification', [
@@ -78,12 +80,14 @@ class ProductController extends Controller
             'part_code' => 'required|string',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
             'merk' => 'nullable|string',
+            'code_barang' => 'required|string'
         ]);
 
         try {
             $product->name = $request->name;
             $product->part_code = $request->part_code;
             $product->merk = $request->merk;
+            $product->code_barang = $request->code_barang;
 
             if ($request->hasFile('image')) {
                 $image = $request->file('image');

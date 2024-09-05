@@ -195,7 +195,7 @@
 
                     const formData = $(this).serialize();
                     const priceString = $('#price').val().replace(/\./g, '').replace('Rp ',
-                    ''); // Clean and convert price
+                        ''); // Clean and convert price
                     const price = parseInt(priceString); // Convert to integer
 
                     $.post('/product-entry-details', formData + '&price=' + price, function(data) {

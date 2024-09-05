@@ -14,6 +14,7 @@ class Product extends Model
         'part_code',
         'merk',
         'image',
+        'code_barang',
     ];
     public function productEntriesDetail()
     {
