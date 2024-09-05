@@ -15,7 +15,7 @@ use App\Http\Controllers\ProductEntryDetailController;
 //Auth Routes
 Route::get('/', [AuthController::class, 'index'])->name('login');
 Route::post('/masuk', [AuthController::class, 'login'])->name('login.post');
-Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 Route::middleware(['isLogin'])->group(function () {
