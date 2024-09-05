@@ -10,8 +10,8 @@
                     <div class="card">
                         <div class="card-body">
                             <h4 class="card-title">Detail Exit Produk untuk {{ $productExit->no_exit }}</h4>
-
-                            <div class="mb-3">
+                            <br>
+                            <div class="align-right text-right">
                                 <button type="button" class="btn btn-primary" data-toggle="modal"
                                     data-target="#selectProductEntryModal">
                                     <i class="fas fa-plus"></i> Tambah Detail Exit Produk
@@ -31,6 +31,32 @@
                                     aria-label="Search">
                             </div>
                             <br>
+                            @if (session('success'))
+                                <script>
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Success',
+                                        text: '{{ session('success') }}',
+                                        showConfirmButton: false,
+                                        timer: 3000
+                                    });
+                                </script>
+                            @endif
+                            @if (session('error'))
+                                <div class="alert alert-danger">
+                                    {{ session('error') }}
+                                </div>
+                            @endif
+
+                            @if ($errors->any())
+                                <div class="alert alert-danger">
+                                    <ul>
+                                        @foreach ($errors->all() as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
+                                </div>
+                            @endif
                             <div class="table-responsive">
                                 <table class="table table-bordered">
                                     <thead>
