@@ -117,7 +117,7 @@
             <div>Nama Kapal</div>
             <div>{{ $productEntry->nama_kapal }}</div>
             <div>No Permintaan</div>
-            <div>{{ $productEntry->no_permintaan }}</div>
+            <div id="noPermintaan">{{ $productEntry->no_permintaan }}</div>
             <div>Tanggal Permintaan</div>
             <div>{{ \Carbon\Carbon::parse($productEntry->tgl_permintaan)->format('d/m/Y') }}</div>
             <div>Lampiran</div>
@@ -209,7 +209,12 @@
                 );
             }
 
-            pdf.save('Form-Permintaan-Barang.pdf');
+            // Ambil nilai noPermintaan dari elemen HTML
+            const noPermintaan = document.getElementById('noPermintaan').innerText.trim();
+            const filename = `Form-Permintaan-Barang-${noPermintaan}.pdf`;
+
+            // Simpan PDF dengan nama file yang baru
+            pdf.save(filename);
 
             setTimeout(() => {
                 window.history.back();
@@ -218,6 +223,7 @@
 
         window.onload = generatePDF;
     </script>
+
 </body>
 
 </html>
