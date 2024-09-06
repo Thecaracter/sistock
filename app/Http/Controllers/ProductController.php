@@ -17,15 +17,22 @@ class ProductController extends Controller
 {
     public function index()
     {
-        // Mengambil semua produk bersama dengan relasi productEntriesDetail dan productEntry
-        $products = Product::with('productEntriesDetail.productEntry')->get();
+        // Mengambil semua produk bersama dengan relasi productEntriesDetail (yang memiliki stok) dan productEntry
+        $products = Product::with([
+            'productEntriesDetail' => function ($query) {
+                $query->where('stock', '>', 0);
+            },
+            'productEntriesDetail.productEntry'
+        ])
+            ->get();
 
-        // Mengurutkan produk berdasarkan tgl_permintaan dari detail entri
-        foreach ($products as $product) {
+        // Mengurutkan productEntriesDetail untuk setiap produk berdasarkan tgl_permintaan
+        $products = $products->map(function ($product) {
             $product->productEntriesDetail = $product->productEntriesDetail->sortBy(function ($detail) {
-                return Carbon::parse($detail->productEntry->tgl_permintaan);
+                return $detail->productEntry->tgl_permintaan;
             });
-        }
+            return $product;
+        });
 
         // Mengirimkan data produk ke view 'pages.product'
         return view('pages.product', compact('products'));
@@ -180,19 +187,24 @@ class ProductController extends Controller
     }
     public function print()
     {
-        // Mengambil semua produk dengan stok lebih dari 0 bersama dengan relasi productEntriesDetail dan productEntry
-        $products = Product::where('stock', '>', 0)
+        // Mengambil semua produk yang memiliki productEntriesDetail dengan stok lebih dari 0
+        $products = Product::whereHas('productEntriesDetail', function ($query) {
+            $query->where('stock', '>', 0);
+        })
             ->with([
+                'productEntriesDetail' => function ($query) {
+                    $query->where('stock', '>', 0);
+                },
                 'productEntriesDetail.productEntry' => function ($query) {
                     $query->orderBy('tgl_permintaan', 'asc');
                 }
             ])
             ->get();
 
-        // Mengurutkan produk berdasarkan tgl_permintaan dari detail entri
+        // Mengurutkan productEntriesDetail untuk setiap produk berdasarkan tgl_permintaan
         $products = $products->map(function ($product) {
             $product->productEntriesDetail = $product->productEntriesDetail->sortBy(function ($detail) {
-                return Carbon::parse($detail->productEntry->tgl_permintaan);
+                return $detail->productEntry->tgl_permintaan;
             });
             return $product;
         });
