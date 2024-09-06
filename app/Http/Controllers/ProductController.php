@@ -178,4 +178,27 @@ class ProductController extends Controller
     {
         return Excel::download(new ProductsExport, 'products.xlsx');
     }
+    public function print()
+    {
+        // Mengambil semua produk dengan stok lebih dari 0 bersama dengan relasi productEntriesDetail dan productEntry
+        $products = Product::where('stock', '>', 0)
+            ->with([
+                'productEntriesDetail.productEntry' => function ($query) {
+                    $query->orderBy('tgl_permintaan', 'asc');
+                }
+            ])
+            ->get();
+
+        // Mengurutkan produk berdasarkan tgl_permintaan dari detail entri
+        $products = $products->map(function ($product) {
+            $product->productEntriesDetail = $product->productEntriesDetail->sortBy(function ($detail) {
+                return Carbon::parse($detail->productEntry->tgl_permintaan);
+            });
+            return $product;
+        });
+
+        // Mengirimkan data produk ke view 'print.printProduct'
+        return view('print.printProduct', compact('products'));
+    }
+
 }

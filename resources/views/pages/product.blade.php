@@ -12,6 +12,10 @@
                             <h4 class="card-title">Data Produk</h4>
                             <div class="row text-right">
                                 <div class="col">
+                                    <button type="button"
+                                        class="btn btn-danger"onclick="window.location.href='{{ route('product.print') }}'">
+                                        <i class="fas fa-print"></i> Print
+                                    </button>
                                     <button type="button" class="btn btn-success" data-toggle="modal"
                                         data-target="#uploadExcelModal">
                                         <i class="fas fa-file-excel"></i> Import Data

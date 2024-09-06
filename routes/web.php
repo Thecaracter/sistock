@@ -37,6 +37,7 @@ Route::middleware(['isLogin'])->group(function () {
     Route::delete('/product/{product}', [ProductController::class, 'destroy'])->name('product.destroy');
     Route::post('/import-excel', [ProductController::class, 'importExcel'])->name('products.import.excel');
     Route::get('/export-excel', [ProductController::class, 'exportExcel'])->name('products.export.excel');
+    Route::get('/print-products', [ProductController::class, 'print'])->name('product.print');
 
     //Product Entry Routes
     Route::get('/product-entries', [ProductEntriesController::class, 'index'])->name('product_entries.index');
