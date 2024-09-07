@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PCM Form</title>
+    <title>PCM Form Keluar</title>
     <style>
         @page {
             size: A4;
@@ -64,6 +64,21 @@
             background-color: #e6ffe6;
         }
 
+        .form-title-container {
+            text-align: right;
+        }
+
+        .form-title {
+            font-weight: bold;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .current-date {
+            font-size: 14px;
+            color: #666;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -93,16 +108,22 @@
             justify-content: space-between;
             padding: 30px 0;
             margin-top: 30px;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .signature {
-            width: 45%;
+            width: 30%;
             text-align: center;
         }
 
         .signature p {
             margin: 5px 0;
+        }
+
+        .signature-line {
+            height: 80px;
+            border-bottom: 1px solid black;
+            margin: 10px 0;
         }
     </style>
 </head>
@@ -111,53 +132,69 @@
     <div id="printArea" class="container">
         <div class="header">
             <img src="{{ asset('foto/logo.png') }}" alt="Company Logo" class="logo">
-            <div class="form-title">FORMULIR<br>PERMINTAAN BARANG</div>
+            <div class="form-title-container">
+                <div class="form-title">FORMULIR<br>PENGELUARAN BARANG</div>
+                <div class="current-date">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</div>
+            </div>
         </div>
         <div class="form-info">
             <div>Nama Kapal</div>
-            <div>{{ $productEntry->nama_kapal }}</div>
-            <div>No Permintaan</div>
-            <div id="noPermintaan">{{ $productEntry->no_permintaan }}</div>
-            <div>Tanggal Permintaan</div>
-            <div>{{ \Carbon\Carbon::parse($productEntry->tgl_permintaan)->format('d/m/Y') }}</div>
-            <div>Lampiran</div>
-            <div>{{ $productEntry->attachment ?? '' }}</div>
+            <div>{{ $productExit->nama_kapal }}</div>
+            <div>No Exit</div>
+            <div id="noExit">{{ $productExit->no_exit }}</div>
+            <div>Tanggal Exit</div>
+            <div>{{ \Carbon\Carbon::parse($productExit->tgl_exit)->format('d/m/Y') }}</div>
             <div>Jenis Barang</div>
-            <div>{{ $productEntry->jenis_barang }}</div>
+            <div>{{ $productExit->jenis_barang }}</div>
         </div>
         <table>
             <thead>
                 <tr>
                     <th style="width: 5%;">No</th>
                     <th style="width: 20%;">Kode Barang</th>
-                    <th style="width: 30%;">Nama Barang</th>
-                    <th style="width: 25%;">Part Number</th>
-                    <th style="width: 20%;">Jumlah</th>
+                    <th style="width: 25%;">Nama Barang</th>
+                    <th style="width: 15%;">Jumlah</th>
+                    <th style="width: 15%;">Harga</th>
+                    <th style="width: 20%;">Total</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach ($productEntry->productEntryDetail as $index => $detail)
+                @foreach ($productExit->productExitDetails as $index => $detail)
                     <tr>
                         <td>{{ $index + 1 }}</td>
-                        <td>{{ $detail->product->code_barang }}</td>
-                        <td>{{ $detail->product->name }}</td>
-                        <td>{{ $detail->product->part_code ?? '' }}</td>
-                        <td>{{ $detail->quantity }} {{ $detail->unit }}</td>
+                        <td>{{ $detail->productEntryDetail->product->code_barang }}</td>
+                        <td>{{ $detail->productEntryDetail->product->name }}</td>
+                        <td>{{ $detail->quantity }}</td>
+                        <td>{{ number_format($detail->price, 2) }}</td>
+                        <td>{{ number_format($detail->total, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        <div style="display: flex; justify-content: space-between; ">
+            <p style="font-size: 12px;">Barang telah diperiksa dan diserahkan</p>
+            <p style="font-size: 12px;">Barang telah diperiksa dan diserahkan</p>
+        </div>
         <div class="footer">
             <div class="signature">
-                <p>Departemen Fleet & Tugboat</p>
-                <p>Diajukan Oleh,</p>
-                <br><br><br><br>
+                <p>Departemen Head</p>
+                <p>Procurement and Asset</p>
+                <div class="signature-line"></div>
                 <p>{{ $submitted_by }}</p>
+                <p style="margin-top: 50px; text-align: left;">*wajib di isi</p>
             </div>
             <div class="signature">
-                <p>Diketahui Atasan Langsung,</p>
-                <br><br><br><br><br>
+                <p>Yang Menerima</p>
+                <br>
+                <div class="signature-line"></div>
+                <p>{{ $recipient_by }}</p>
+            </div>
+            <div class="signature">
+                <p>Departemen Head</p>
+                <p>Fleet and Tugboat</p>
+                <div class="signature-line"></div>
                 <p>{{ $approved_by }}</p>
+                <p style="margin-top: 50px; text-align: left;">*wajib di isi</p>
             </div>
         </div>
     </div>
@@ -171,7 +208,6 @@
             } = window.jspdf;
             const element = document.getElementById('printArea');
 
-            // Capture the entire content
             const canvas = await html2canvas(element, {
                 scale: 1,
                 useCORS: true,
@@ -180,20 +216,16 @@
 
             const imgData = canvas.toDataURL('image/png');
 
-            // A4 height in pixels (assuming 96 DPI)
             const a4HeightPx = 1123;
 
-            // Create PDF with the width of the content and A4 height
             const pdf = new jsPDF({
                 orientation: 'p',
                 unit: 'px',
                 format: [canvas.width, a4HeightPx]
             });
 
-            // Calculate the number of pages needed
             const pageCount = Math.ceil(canvas.height / a4HeightPx);
 
-            // Add content to pages
             for (let i = 0; i < pageCount; i++) {
                 if (i > 0) {
                     pdf.addPage([canvas.width, a4HeightPx]);
@@ -209,11 +241,9 @@
                 );
             }
 
-            // Ambil nilai noPermintaan dari elemen HTML
-            const noPermintaan = document.getElementById('noPermintaan').innerText.trim();
-            const filename = `Form-Permintaan-Barang-${noPermintaan}.pdf`;
+            const noExit = document.getElementById('noExit').innerText.trim();
+            const filename = `Form-Pengeluaran-Barang-${noExit}.pdf`;
 
-            // Simpan PDF dengan nama file yang baru
             pdf.save(filename);
 
             setTimeout(() => {
@@ -221,7 +251,7 @@
             }, 100);
         }
 
-        window.onload = generatePDF;
+        // window.onload = generatePDF;
     </script>
 
 </body>

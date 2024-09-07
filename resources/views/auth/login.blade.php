@@ -6,9 +6,26 @@
     <div class="limiter">
         <div class="container-login100">
             <div class="wrap-login100">
-                <div class="login100-pic js-tilt" data-tilt>
-                    <img src="{{ asset('login/images/img-01.png') }}" alt="IMG">
+                <div
+                    style="display: flex; flex-direction: column; justify-content: center; align-items: center; margin-top: -200px;">
+                    <div class="login100-pic js-tilt" data-tilt>
+                        <img src="{{ asset('foto/logo.png') }}" alt="IMG">
+                    </div>
+                    <p style="margin-top: 10px; font-size: 16px;" class="mobile-text">Pelabuhan Cilegon Mandiri</p>
                 </div>
+
+                <style>
+                    .mobile-text {
+                        display: none;
+
+                    }
+
+                    @media (min-width: 768px) {
+                        .mobile-text {
+                            display: block;
+                        }
+                    }
+                </style>
 
                 <form class="login100-form validate-form" method="POST" action="{{ route('login.post') }}">
                     @csrf

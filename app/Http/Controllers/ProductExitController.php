@@ -237,4 +237,19 @@ class ProductExitController extends Controller
     {
         return Excel::download(new ProductExitExport, 'product_exits.xlsx');
     }
+
+    public function show($id, Request $request)
+    {
+        $productExit = ProductExit::with('productExitDetails.productEntryDetail.product')
+            ->findOrFail($id);
+
+        // Get the submitted_by and approved_by from the request
+        $recipient_by = $request->input('recipient_by');
+        $submitted_by = $request->input('submitted_by');
+        $approved_by = $request->input('approved_by');
+
+        // Pass these values to the view
+        return view('print.printDataKeluar', compact('productExit', 'submitted_by', 'approved_by', 'recipient_by'));
+    }
+
 }

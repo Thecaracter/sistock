@@ -13,10 +13,7 @@
                             <p><strong>Total:</strong> <span id="entryTotal"></span></p>
                             <br>
                             <div class="align-right text-right">
-                                <button type="button" class="btn btn-primary" data-toggle="modal"
-                                    data-target="#selectProductEntryModal">
-                                    <i class="fas fa-plus"></i> Tambah Detail Exit Produk
-                                </button>
+
                                 <a href="{{ route('product-exit-details.export', $productExit->id) }}"
                                     class="btn btn-success">
                                     <i class="fas fa-file-excel"></i> Export Excel
@@ -24,6 +21,10 @@
                                 <button type="button" class="btn btn-info" data-toggle="modal"
                                     data-target="#importExcelModal">
                                     <i class="fas fa-file-import"></i> Import Excel
+                                </button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal"
+                                    data-target="#selectProductEntryModal">
+                                    <i class="fas fa-plus"></i> Tambah Detail Exit Produk
                                 </button>
                             </div>
                             <br>

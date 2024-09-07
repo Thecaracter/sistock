@@ -65,7 +65,7 @@
                                                     </a>
                                                 </td>
                                                 <td class="text-center">
-                                                    <button type="button" class="btn btn-success" data-toggle="modal"
+                                                    <button type="button" class="btn btn-warning" data-toggle="modal"
                                                         data-target="#printModal{{ $entry->id }}">
                                                         <i class="fas fa-print"></i> Print
                                                     </button>
