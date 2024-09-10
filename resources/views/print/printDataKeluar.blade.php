@@ -35,6 +35,13 @@
             border-bottom: 2px solid #000;
         }
 
+        .nama-barang {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            max-width: 150px;
+        }
+
         .logo {
             font-weight: bold;
             font-size: 32px;
@@ -50,8 +57,8 @@
         .form-info {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 10px;
-            padding: 15px 0;
+            gap: 5px;
+            padding: 10px 0;
             border-bottom: 2px solid #000;
             font-size: 16px;
         }
@@ -107,7 +114,7 @@
             display: flex;
             justify-content: space-between;
             padding: 30px 0;
-            margin-top: 30px;
+            margin-top: -35px;
             font-size: 14px;
         }
 
@@ -133,7 +140,7 @@
         <div class="header">
             <img src="{{ asset('foto/logo.png') }}" alt="Company Logo" class="logo">
             <div class="form-title-container">
-                <div class="form-title">FORMULIR<br>PENGELUARAN BARANG</div>
+                <div class="form-title">FORMULIR<br>SERAH TERIMA BARANG</div>
                 <div class="current-date">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</div>
             </div>
         </div>
@@ -150,12 +157,11 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 20%;">Kode Barang</th>
-                    <th style="width: 25%;">Nama Barang</th>
-                    <th style="width: 15%;">Jumlah</th>
-                    <th style="width: 15%;">Harga</th>
-                    <th style="width: 20%;">Total</th>
+                    <th style="width: 5%; text-align: center;">No</th>
+                    <th style="width: 20%; text-align: center;">Kode Barang</th>
+                    <th style="width: 30%; text-align: center;">Nama Barang</th>
+                    <th style="width: 20%; text-align: center;">Part Number</th>
+                    <th style="width: 10%; text-align: center;">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
@@ -163,14 +169,14 @@
                     <tr>
                         <td>{{ $index + 1 }}</td>
                         <td>{{ $detail->productEntryDetail->product->code_barang }}</td>
-                        <td>{{ $detail->productEntryDetail->product->name }}</td>
+                        <td class="nama-barang">{{ $detail->productEntryDetail->product->name }}</td>
+                        <td>{{ $detail->productEntryDetail->product->part_code ?? '' }}</td>
                         <td>{{ $detail->quantity }}</td>
-                        <td>{{ number_format($detail->price, 2) }}</td>
-                        <td>{{ number_format($detail->total, 2) }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
+        <br>
         <div style="display: flex; justify-content: space-between; ">
             <p style="font-size: 12px;">Barang telah diperiksa dan diserahkan</p>
             <p style="font-size: 12px;">Barang telah diperiksa dan diserahkan</p>
@@ -251,7 +257,7 @@
             }, 100);
         }
 
-        // window.onload = generatePDF;
+        window.onload = generatePDF;
     </script>
 
 </body>

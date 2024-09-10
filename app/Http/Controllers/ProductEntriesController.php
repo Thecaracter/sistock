@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use Barryvdh\DomPDF\PDF;
 use App\Models\ProductEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Exports\ProductEntriesExport;
 use App\Imports\ProductEntriesImport;
+use App\Exports\CombinedProductExport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -167,7 +166,7 @@ class ProductEntriesController extends Controller
     // Ekspor data ke Excel
     public function export()
     {
-        return Excel::download(new ProductEntriesExport, 'product_entries.xlsx');
+        return Excel::download(new CombinedProductExport, 'Entry_product.xlsx');
     }
 
     // Impor data dari Excel

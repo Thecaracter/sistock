@@ -113,7 +113,8 @@
     <div id="printArea">
         <div class="header">
             <img src="{{ asset('foto/logo.png') }}" alt="Company Logo" class="logo">
-            <h1>Daftar Produk dan Entri</h1>
+            <h1>Daftar Stock Barang</h1>
+            <div class="current-date">{{ \Carbon\Carbon::now()->format('d/m/Y') }}</div>
         </div>
 
         @php
@@ -131,12 +132,12 @@
                     </td>
                 </tr>
                 <tr>
-                    <th>No. Permintaan</th>
-                    <th>Tanggal Permintaan</th>
-                    <th>Nama Kapal</th>
-                    <th>Stock</th>
-                    <th>Harga</th>
-                    <th>Total</th>
+                    <th style="text-align: center;">No. Permintaan</th>
+                    <th style="text-align: center;">Tanggal Permintaan</th>
+                    <th style="text-align: center;">Nama Kapal</th>
+                    <th style="text-align: center;">Stock</th>
+                    <th style="text-align: center;">Harga</th>
+                    <th style="text-align: center;">Total</th>
                 </tr>
                 @php
                     $totalQuantity = 0;
@@ -151,8 +152,8 @@
                         <td>{{ Carbon::parse($detail->productEntry->tgl_permintaan)->format('d/m/Y') }}</td>
                         <td>{{ $detail->productEntry->nama_kapal }}</td>
                         <td>{{ $detail->stock }}</td>
-                        <td>Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
-                        <td>Rp {{ number_format($entryTotal, 0, ',', '.') }}</td>
+                        <td style="text-align: right;">Rp {{ number_format($detail->price, 0, ',', '.') }}</td>
+                        <td style="text-align: right;">Rp {{ number_format($entryTotal, 0, ',', '.') }}</td>
                     </tr>
                     @php
                         $totalQuantity += $detail->stock;
@@ -163,7 +164,7 @@
                     <td colspan="3">Total</td>
                     <td>{{ $totalQuantity }}</td>
                     <td></td>
-                    <td>Rp {{ number_format($totalAmount, 0, ',', '.') }}</td>
+                    <td style="text-align: right;">Rp {{ number_format($totalAmount, 0, ',', '.') }}</td>
                 </tr>
             </table>
             @php
@@ -227,7 +228,7 @@
 
             setTimeout(() => {
                 window.history.back();
-            }, 100);
+            }, 10);
         }
 
         window.onload = generatePDF;

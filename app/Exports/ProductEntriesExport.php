@@ -3,25 +3,30 @@
 namespace App\Exports;
 
 use App\Models\ProductEntry;
-use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
-use Illuminate\Support\Facades\Log;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ProductEntriesExport implements FromCollection, WithHeadings
+class ProductEntriesExport implements FromQuery, WithHeadings, WithTitle, WithMapping
 {
-    public function collection()
+    public function query()
     {
-        $data = ProductEntry::select('id', 'nama_kapal', 'no_permintaan', 'tgl_permintaan', 'jenis_barang', 'total')
-            ->get()
-            ->map(function ($item) {
-                $item->total = $item->total ?? 0;
-                Log::info('Exporting item:', $item->toArray()); // Tambahkan logging
-                return $item;
-            });
+        return ProductEntry::query();
+    }
 
-        Log::info('Total items to export: ' . $data->count());
-
-        return $data;
+    public function map($productEntry): array
+    {
+        return [
+            $productEntry->id,
+            $productEntry->nama_kapal,
+            $productEntry->no_permintaan,
+            $productEntry->tgl_permintaan,
+            $productEntry->jenis_barang,
+            $productEntry->total,
+            $productEntry->created_at,
+            $productEntry->updated_at,
+        ];
     }
 
     public function headings(): array
@@ -33,6 +38,13 @@ class ProductEntriesExport implements FromCollection, WithHeadings
             'Tanggal Permintaan',
             'Jenis Barang',
             'Total',
+            'Created At',
+            'Updated At',
         ];
+    }
+
+    public function title(): string
+    {
+        return 'Product Entries';
     }
 }

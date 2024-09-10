@@ -8,7 +8,7 @@
     <style>
         @page {
             size: A4;
-            margin: 0;
+
         }
 
         body {
@@ -22,6 +22,9 @@
             width: 210mm;
             min-height: 297mm;
             padding: 10mm;
+            padding-top: 15mm;
+            padding-bottom: 30mm;
+            /* Padding bawah ditambah untuk mencegah footer terpotong */
             background: white;
             box-sizing: border-box;
             margin: 0 auto;
@@ -36,9 +39,8 @@
         }
 
         .logo {
-            font-weight: bold;
-            font-size: 32px;
-            color: #0066cc;
+            max-width: 150px;
+            height: auto;
         }
 
         .form-title {
@@ -50,14 +52,14 @@
         .form-info {
             display: grid;
             grid-template-columns: 1fr 2fr;
-            gap: 10px;
-            padding: 15px 0;
+            gap: 5px;
+            padding: 10px 0;
             border-bottom: 2px solid #000;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         .form-info div {
-            padding: 5px;
+            padding: 3px;
         }
 
         .form-info div:nth-child(even) {
@@ -74,35 +76,59 @@
         th,
         td {
             border: 1px solid #000;
-            padding: 12px;
+            padding: 8px;
             text-align: left;
-            font-size: 14px;
+            font-size: 12px;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
         }
 
         th {
             background-color: #f2f2f2;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 14px;
+        }
+
+        .nama-barang {
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            max-width: 150px;
         }
 
         .footer {
             display: flex;
             justify-content: space-between;
             padding: 30px 0;
-            margin-top: 30px;
-            font-size: 16px;
+            margin-top: 50px;
+            /* Tambahkan margin atas untuk memastikan tanda tangan tidak terpotong */
+            font-size: 14px;
+            page-break-inside: avoid;
         }
 
         .signature {
             width: 45%;
             text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 150px;
         }
 
         .signature p {
             margin: 5px 0;
+        }
+
+        .signature .name {
+            margin-top: auto;
+            padding-top: 10px;
+            border-top: 1px solid #000;
+        }
+
+        @media print {
+            .page-break {
+                page-break-before: always;
+            }
         }
     </style>
 </head>
@@ -125,39 +151,44 @@
             <div>Jenis Barang</div>
             <div>{{ $productEntry->jenis_barang }}</div>
         </div>
-        <table>
+        <table id="dataTable">
             <thead>
                 <tr>
-                    <th style="width: 5%;">No</th>
-                    <th style="width: 20%;">Kode Barang</th>
-                    <th style="width: 30%;">Nama Barang</th>
-                    <th style="width: 25%;">Part Number</th>
-                    <th style="width: 20%;">Jumlah</th>
+                    <th style="width: 5%; text-align: center; vertical-align: middle;">No</th>
+                    <th style="width: 20%; text-align: center; vertical-align: middle;">Kode Barang</th>
+                    <th style="width: 30%; text-align: center; vertical-align: middle;">Nama Barang</th>
+                    <th style="width: 25%; text-align: center; vertical-align: middle;">Part Number</th>
+                    <th style="width: 20%; text-align: center; vertical-align: middle;">Jumlah</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach ($productEntry->productEntryDetail as $index => $detail)
                     <tr>
-                        <td>{{ $index + 1 }}</td>
-                        <td>{{ $detail->product->code_barang }}</td>
-                        <td>{{ $detail->product->name }}</td>
-                        <td>{{ $detail->product->part_code ?? '' }}</td>
-                        <td>{{ $detail->quantity }} {{ $detail->unit }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ $index + 1 }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ $detail->product->code_barang }}</td>
+                        <td class="nama-barang">{{ $detail->product->name }}</td>
+                        <td style="text-align: center; vertical-align: middle;">{{ $detail->product->part_code ?? '' }}
+                        </td>
+                        <td style="text-align: center; vertical-align: middle;">{{ $detail->quantity }}
+                            {{ $detail->unit }}</td>
                     </tr>
                 @endforeach
             </tbody>
         </table>
-        <div class="footer">
+
+        <div id="footer" class="footer">
             <div class="signature">
-                <p>Departemen Fleet & Tugboat</p>
-                <p>Diajukan Oleh,</p>
-                <br><br><br><br>
-                <p>{{ $submitted_by }}</p>
+                <div>
+                    <p>Departemen Fleet & Tugboat</p>
+                    <p>Diajukan Oleh,</p>
+                </div>
+                <p class="name">{{ $submitted_by }}</p>
             </div>
             <div class="signature">
-                <p>Diketahui Atasan Langsung,</p>
-                <br><br><br><br><br>
-                <p>{{ $approved_by }}</p>
+                <div>
+                    <p>Diketahui Atasan Langsung,</p>
+                </div>
+                <p class="name">{{ $approved_by }}</p>
             </div>
         </div>
     </div>
@@ -165,55 +196,61 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.3.2/html2canvas.min.js"></script>
     <script>
+        function adjustFooterPosition() {
+            const container = document.querySelector('.container');
+            const table = document.getElementById('dataTable');
+            const footer = document.getElementById('footer');
+
+            const containerHeight = container.offsetHeight;
+            const tableBottom = table.offsetTop + table.offsetHeight;
+            const footerHeight = footer.offsetHeight;
+
+            if (tableBottom + footerHeight > containerHeight) {
+                const spacer = document.createElement('div');
+                spacer.style.height = (containerHeight - tableBottom) + 'px';
+                table.parentNode.insertBefore(spacer, footer);
+            }
+        }
+
         async function generatePDF() {
+            adjustFooterPosition();
+
             const {
                 jsPDF
             } = window.jspdf;
             const element = document.getElementById('printArea');
+            const pdf = new jsPDF('p', 'mm', 'a4');
 
-            // Capture the entire content
-            const canvas = await html2canvas(element, {
-                scale: 1,
+            await html2canvas(element, {
+                scale: 4,
                 useCORS: true,
                 logging: true
-            });
+            }).then((canvas) => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 190; // Mengecilkan lebar gambar (sebelumnya 210)
+                const pageHeight = 295; // Tinggi halaman A4
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
 
-            const imgData = canvas.toDataURL('image/png');
+                const marginBottom = 50; // Menyediakan margin bawah
 
-            // A4 height in pixels (assuming 96 DPI)
-            const a4HeightPx = 1123;
+                // Tambahkan gambar di halaman pertama
+                pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight -
+                    marginBottom); // 10 untuk padding kiri
+                heightLeft -= pageHeight;
 
-            // Create PDF with the width of the content and A4 height
-            const pdf = new jsPDF({
-                orientation: 'p',
-                unit: 'px',
-                format: [canvas.width, a4HeightPx]
-            });
-
-            // Calculate the number of pages needed
-            const pageCount = Math.ceil(canvas.height / a4HeightPx);
-
-            // Add content to pages
-            for (let i = 0; i < pageCount; i++) {
-                if (i > 0) {
-                    pdf.addPage([canvas.width, a4HeightPx]);
+                // Buat halaman baru jika konten lebih dari satu halaman
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight - marginBottom);
+                    heightLeft -= pageHeight;
                 }
+            });
 
-                pdf.addImage(
-                    imgData,
-                    'PNG',
-                    0,
-                    -i * a4HeightPx,
-                    canvas.width,
-                    canvas.height
-                );
-            }
-
-            // Ambil nilai noPermintaan dari elemen HTML
             const noPermintaan = document.getElementById('noPermintaan').innerText.trim();
             const filename = `Form-Permintaan-Barang-${noPermintaan}.pdf`;
-
-            // Simpan PDF dengan nama file yang baru
             pdf.save(filename);
 
             setTimeout(() => {
@@ -223,7 +260,6 @@
 
         window.onload = generatePDF;
     </script>
-
 </body>
 
 </html>
