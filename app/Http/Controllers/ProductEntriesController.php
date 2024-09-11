@@ -11,6 +11,9 @@ use App\Imports\ProductEntriesImport;
 use App\Exports\CombinedProductExport;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Mpdf\Mpdf;
+
 
 class ProductEntriesController extends Controller
 {
@@ -191,6 +194,40 @@ class ProductEntriesController extends Controller
         // Pass these values to the view
         return view('print.printDataMasuk', compact('productEntry', 'submitted_by', 'approved_by'));
     }
+    // public function show($id, Request $request)
+    // {
+    //     $productEntry = ProductEntry::with('productEntryDetail.product')->findOrFail($id);
 
+    //     // Get the submitted_by and approved_by from the request
+    //     $submitted_by = $request->input('submitted_by');
+    //     $approved_by = $request->input('approved_by');
+
+    //     // Pass these values to the view
+    //     $pdf = Pdf::loadView('print.printDataMasuk', compact('productEntry', 'submitted_by', 'approved_by'));
+
+    //     return $pdf->stream('data_masuk.pdf');
+    // }
+
+    // public function show($id, Request $request)
+    // {
+    //     // Mengambil data ProductEntry beserta relasi productEntryDetail dan product
+    //     $productEntry = ProductEntry::with('productEntryDetail.product')->findOrFail($id);
+
+    //     // Mendapatkan 'submitted_by' dan 'approved_by' dari request
+    //     $submitted_by = $request->input('submitted_by');
+    //     $approved_by = $request->input('approved_by');
+
+    //     // Load view dan simpan output HTML-nya
+    //     $html = view('print.printDataMasuk', compact('productEntry', 'submitted_by', 'approved_by'))->render();
+
+    //     // Inisialisasi mPDF
+    //     $mpdf = new Mpdf();
+
+    //     // Memasukkan konten HTML ke mPDF
+    //     $mpdf->WriteHTML($html);
+
+    //     // Menampilkan file PDF di browser
+    //     return $mpdf->Output('data_masuk.pdf', 'I'); // 'I' untuk menampilkan di browser
+    // }
 
 }

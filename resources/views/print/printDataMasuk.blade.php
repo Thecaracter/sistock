@@ -8,7 +8,6 @@
     <style>
         @page {
             size: A4;
-
         }
 
         body {
@@ -24,7 +23,6 @@
             padding: 10mm;
             padding-top: 15mm;
             padding-bottom: 30mm;
-            /* Padding bawah ditambah untuk mencegah footer terpotong */
             background: white;
             box-sizing: border-box;
             margin: 0 auto;
@@ -101,7 +99,6 @@
             justify-content: space-between;
             padding: 30px 0;
             margin-top: 50px;
-            /* Tambahkan margin atas untuk memastikan tanda tangan tidak terpotong */
             font-size: 14px;
             page-break-inside: avoid;
         }
@@ -113,6 +110,14 @@
             flex-direction: column;
             justify-content: space-between;
             height: 150px;
+            page-break-inside: avoid;
+        }
+
+        .signature-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
 
         .signature p {
@@ -128,6 +133,56 @@
         @media print {
             .page-break {
                 page-break-before: always;
+            }
+
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                page-break-inside: auto;
+            }
+
+            tr,
+            td,
+            th {
+                page-break-inside: avoid;
+            }
+
+            .footer {
+                display: block;
+                page-break-inside: avoid;
+                margin-top: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                page-break-before: auto;
+            }
+
+            .signature {
+                width: 45%;
+                text-align: center;
+                display: inline-block;
+                page-break-inside: avoid;
+                break-inside: avoid;
+                vertical-align: top;
+            }
+
+            .signature-content {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+
+            .name {
+                margin-top: 50px;
+                page-break-inside: avoid;
+                page-break-before: avoid;
+                break-before: avoid;
+            }
+
+            body {
+                margin-top: 20px;
+                margin-left: 20px;
+                margin-right: 20px;
+                margin-bottom: 4cm;
             }
         }
     </style>
@@ -178,17 +233,21 @@
 
         <div id="footer" class="footer">
             <div class="signature">
-                <div>
-                    <p>Departemen Fleet & Tugboat</p>
-                    <p>Diajukan Oleh,</p>
+                <div class="signature-content">
+                    <div>
+                        <p>Departemen Fleet & Tugboat</p>
+                        <p>Diajukan Oleh,</p>
+                    </div>
+                    <p class="name">{{ $submitted_by }}</p>
                 </div>
-                <p class="name">{{ $submitted_by }}</p>
             </div>
             <div class="signature">
-                <div>
-                    <p>Diketahui Atasan Langsung,</p>
+                <div class="signature-content">
+                    <div>
+                        <p>Diketahui Atasan Langsung,</p>
+                    </div>
+                    <p class="name">{{ $approved_by }}</p>
                 </div>
-                <p class="name">{{ $approved_by }}</p>
             </div>
         </div>
     </div>

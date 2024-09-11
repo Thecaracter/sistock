@@ -50,6 +50,7 @@
                                         @foreach ($productExits as $index => $exit)
                                             <tr>
                                                 <td class="text-center">{{ $index + 1 }}</td>
+                                                <td class="text-center">{{ $exit->id }}</td>
                                                 <td class="text-center">{{ $exit->nama_kapal }}</td>
                                                 <td class="text-center">{{ $exit->no_exit }}</td>
                                                 <td class="text-center">
@@ -184,44 +185,46 @@
                     </div>
                 </div>
             </div>
-        @endforeach
-
-        <!-- Modal -->
-        <div class="modal fade" id="printModal{{ $exit->id }}" tabindex="-1" role="dialog"
-            aria-labelledby="printModalLabel{{ $exit->id }}" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="printModalLabel{{ $exit->id }}">Print Confirmation</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
+            <!-- Modal -->
+            <div class="modal fade" id="printModal{{ $exit->id }}" tabindex="-1" role="dialog"
+                aria-labelledby="printModalLabel{{ $exit->id }}" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="printModalLabel{{ $exit->id }}">Print Confirmation</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <form action="{{ route('product_exits.print', $exit->id) }}" method="GET" target="_blank">
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="submitted_by"> Departemen Head Procurement and Asset:</label>
+                                    <input type="text" class="form-control" id="submitted_by" name="submitted_by"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="recipient_by">Yang Menerima:</label>
+                                    <input type="text" class="form-control" id="recipient_by" name="recipient_by"
+                                        required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="approved_by"> Departemen Head Fleet and Tugoat:</label>
+                                    <input type="text" class="form-control" id="approved_by" name="approved_by"
+                                        required>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Print</button>
+                            </div>
+                        </form>
                     </div>
-                    <form action="{{ route('product_exits.print', $exit->id) }}" method="GET" target="_blank">
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="submitted_by"> Departemen Head Procurement and Asset:</label>
-                                <input type="text" class="form-control" id="submitted_by" name="submitted_by"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="recipient_by">Yang Menerima:</label>
-                                <input type="text" class="form-control" id="recipient_by" name="recipient_by"
-                                    required>
-                            </div>
-                            <div class="form-group">
-                                <label for="approved_by"> Departemen Head Fleet and Tugoat:</label>
-                                <input type="text" class="form-control" id="approved_by" name="approved_by" required>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                            <button type="submit" class="btn btn-primary">Print</button>
-                        </div>
-                    </form>
                 </div>
             </div>
-        </div>
+        @endforeach
+
+
     </div>
 
     <!-- Tambah modal untuk Import -->
@@ -314,11 +317,11 @@
                                 </a>
                             </td>
                             <td class="text-center">
-                                                    <button type="button" class="btn btn-warning" data-toggle="modal"
-                                                        data-target="#printModal{{ $exit->id }}">
-                                                        <i class="fas fa-print"></i> Print
-                                                    </button>
-                                                </td>
+                            <button type="button" class="btn btn-warning" data-toggle="modal"
+                                data-target="#printModal${exit.id}">
+                                <i class="fas fa-print"></i> Print
+                            </button>
+                        </td>
                             <td class="align-middle text-center">
                                 <span>
                                     <button data-toggle="modal" data-target="#editProductExitModal${exit.id}" type="button" class="btn btn-info">Edit</button>
